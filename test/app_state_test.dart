@@ -28,7 +28,7 @@ void main() {
         expect(state.adaptiveReminders, true);
         expect(state.reminderInterval, 90);
         expect(state.healthConnectConnected, true);
-        expect(state.lastSyncStr, '2 min ago');
+        expect(state.lastSyncStr, 'just now');
         expect(state.permissions.length, 5);
         expect(state.aiText, '');
         expect(state.aiResult, isNull);
@@ -259,20 +259,30 @@ void main() {
       expect(state.reminders[2]['enabled'], !initial);
     });
 
-    test('toggleHealthConnect and syncNow update Health Connect status', () {
-      final state = AppState();
-      state.toggleHealthConnect();
-      expect(state.healthConnectConnected, false);
-      expect(state.toastMessage, 'Disconnected');
+    test(
+      'toggleHealthConnect and syncNow update Health Connect status',
+      () async {
+        final state = AppState();
+        // Let init complete
+        await Future.delayed(const Duration(milliseconds: 100));
 
-      state.toggleHealthConnect();
-      expect(state.healthConnectConnected, true);
-      expect(state.lastSyncStr, 'just now');
+        // Disconnect (sync path — no async needed since already connected)
+        state.toggleHealthConnect();
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(state.healthConnectConnected, false);
+        expect(state.toastMessage, 'Disconnected');
 
-      state.syncNow();
-      expect(state.lastSyncStr, 'just now');
-      expect(state.toastMessage, 'Synced with Health Connect');
-    });
+        // Reconnect (async path — _requestHealthPermissions is awaited internally)
+        state.toggleHealthConnect();
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(state.healthConnectConnected, true);
+        expect(state.lastSyncStr, 'just now');
+
+        await state.syncNow();
+        expect(state.lastSyncStr, 'just now');
+        expect(state.toastMessage, 'Synced with Health Connect');
+      },
+    );
 
     test('togglePermission flips the toggle at the index', () {
       final state = AppState();

@@ -71,8 +71,13 @@ void mockPlatformChannels() {
             return true;
           case 'getData':
             return [];
+          case 'writeData':
+            return true;
           case 'getTotalStepsInInterval':
             return 0;
+          case 'installHealthConnect':
+          case 'configure':
+            return true;
           default:
             return null;
         }
