@@ -51,13 +51,16 @@ class _WaveContainerState extends State<WaveContainer>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _fillAnimation = Tween<double>(
-      begin: widget.fillPercentage,
-      end: widget.fillPercentage,
-    ).animate(CurvedAnimation(
-      parent: _fillController,
-      curve: const Cubic(0.34, 0.02, 0.16, 1.0),
-    ));
+    _fillAnimation =
+        Tween<double>(
+          begin: widget.fillPercentage,
+          end: widget.fillPercentage,
+        ).animate(
+          CurvedAnimation(
+            parent: _fillController,
+            curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+          ),
+        );
 
     // Bubble rising animation
     _bubbleController = AnimationController(
@@ -70,13 +73,16 @@ class _WaveContainerState extends State<WaveContainer>
   void didUpdateWidget(covariant WaveContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fillPercentage != widget.fillPercentage) {
-      _fillAnimation = Tween<double>(
-        begin: _fillAnimation.value,
-        end: widget.fillPercentage,
-      ).animate(CurvedAnimation(
-        parent: _fillController,
-        curve: const Cubic(0.34, 0.02, 0.16, 1.0),
-      ));
+      _fillAnimation =
+          Tween<double>(
+            begin: _fillAnimation.value,
+            end: widget.fillPercentage,
+          ).animate(
+            CurvedAnimation(
+              parent: _fillController,
+              curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+            ),
+          );
       _fillController.forward(from: 0.0);
     }
   }
@@ -92,7 +98,11 @@ class _WaveContainerState extends State<WaveContainer>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_waveController, _fillAnimation, _bubbleController]),
+      animation: Listenable.merge([
+        _waveController,
+        _fillAnimation,
+        _bubbleController,
+      ]),
       builder: (context, child) {
         return CustomPaint(
           painter: WavePainter(
@@ -164,7 +174,10 @@ class WavePainter extends CustomPainter {
         ..style = PaintingStyle.fill;
 
       // Draw standard box for bottom area to make sure it is fully solid
-      canvas.drawRect(Rect.fromLTWH(0, baseWaterY, size.width, fillHeight), fillPaint);
+      canvas.drawRect(
+        Rect.fromLTWH(0, baseWaterY, size.width, fillHeight),
+        fillPaint,
+      );
 
       // 2. Paint Back Wave (waveColor2 - higher opacity/different phase)
       final backPath = Path();
@@ -207,7 +220,8 @@ class WavePainter extends CustomPainter {
       // 4. Paint Bubbles inside the water
       for (final bubble in bubbles) {
         // Calculate bubble vertical progress (0.0 to 1.0)
-        double progress = (bubbleValue / bubble.durationRatio) + bubble.startDelay;
+        double progress =
+            (bubbleValue / bubble.durationRatio) + bubble.startDelay;
         progress = progress % 1.0;
 
         // Custom easing curve for bubble rise
@@ -232,7 +246,11 @@ class WavePainter extends CustomPainter {
             ..color = Colors.white.withOpacity(opacity)
             ..style = PaintingStyle.fill;
           final double currentX = size.width * bubble.xPercent;
-          canvas.drawCircle(Offset(currentX, currentY), bubble.size / 2, bubblePaint);
+          canvas.drawCircle(
+            Offset(currentX, currentY),
+            bubble.size / 2,
+            bubblePaint,
+          );
         }
       }
     }

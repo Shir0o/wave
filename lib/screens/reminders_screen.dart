@@ -10,7 +10,9 @@ class RemindersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     // Find next reminder
     final nextReminderRow = state.reminders.firstWhere(
@@ -101,7 +103,9 @@ class RemindersScreen extends StatelessWidget {
                       value: state.adaptiveReminders,
                       onChanged: (val) => state.toggleAdaptiveReminders(),
                       activeColor: Colors.white,
-                      activeTrackColor: const Color(0xFF0D94A6).withOpacity(0.3),
+                      activeTrackColor: const Color(
+                        0xFF0D94A6,
+                      ).withOpacity(0.3),
                       inactiveThumbColor: Colors.white,
                       inactiveTrackColor: Colors.white.withOpacity(0.3),
                     ),
@@ -131,7 +135,11 @@ class RemindersScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.bedtime_rounded, color: theme.accent, size: 20),
+                            Icon(
+                              Icons.bedtime_rounded,
+                              color: theme.accent,
+                              size: 20,
+                            ),
                             const SizedBox(width: 10),
                             Text(
                               'Active hours',
@@ -160,7 +168,11 @@ class RemindersScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.timer_rounded, color: theme.accent, size: 20),
+                            Icon(
+                              Icons.timer_rounded,
+                              color: theme.accent,
+                              size: 20,
+                            ),
                             const SizedBox(width: 10),
                             Text(
                               'Every',
@@ -235,7 +247,10 @@ class RemindersScreen extends StatelessWidget {
                   final row = state.reminders[index];
                   final bool enabled = row['enabled'] == true;
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.surface,
                       borderRadius: BorderRadius.circular(18),

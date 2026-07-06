@@ -14,7 +14,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     final todayConsumed = state.totalConsumedToday;
     final pct = (todayConsumed / state.goalOz * 100).clamp(0.0, 100.0).round();
@@ -25,14 +27,18 @@ class HomeScreen extends StatelessWidget {
     final greeting = hour < 12
         ? 'Good morning'
         : hour < 18
-            ? 'Good afternoon'
-            : 'Good evening';
+        ? 'Good afternoon'
+        : 'Good evening';
     final dateStr = DateFormat('EEEE, MMM d').format(now);
 
-    final todayEntries = state.entries.where((e) {
-      final t = e.time;
-      return t.year == now.year && t.month == now.month && t.day == now.day;
-    }).toList().reversed.toList();
+    final todayEntries = state.entries
+        .where((e) {
+          final t = e.time;
+          return t.year == now.year && t.month == now.month && t.day == now.day;
+        })
+        .toList()
+        .reversed
+        .toList();
 
     return Scaffold(
       backgroundColor: theme.bg,
@@ -60,7 +66,10 @@ class HomeScreen extends StatelessWidget {
                   right: 0,
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 10.0,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -92,7 +101,9 @@ class HomeScreen extends StatelessWidget {
                               IconButton(
                                 onPressed: () => state.toggleTheme(),
                                 icon: Icon(
-                                  state.isDarkTheme ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                                  state.isDarkTheme
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
                                   color: theme.accent,
                                   size: 22,
                                 ),
@@ -353,7 +364,8 @@ class HomeScreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: todayEntries.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 8),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final entry = todayEntries[index];
                         return _buildDrinkItem(context, entry, theme);
@@ -396,14 +408,13 @@ class HomeScreen extends StatelessWidget {
             onTap: onTap,
             borderRadius: BorderRadius.circular(22),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                vertical: 14.0,
+                horizontal: 4,
+              ),
               child: Column(
                 children: [
-                  Icon(
-                    icon,
-                    color: theme.accent,
-                    size: 24,
-                  ),
+                  Icon(icon, color: theme.accent, size: 24),
                   const SizedBox(height: 4),
                   Text(
                     title,
@@ -430,7 +441,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDrinkItem(BuildContext context, DrinkEntry entry, AppThemeColors theme) {
+  Widget _buildDrinkItem(
+    BuildContext context,
+    DrinkEntry entry,
+    AppThemeColors theme,
+  ) {
     final state = Provider.of<AppState>(context, listen: false);
     final timeStr = DateFormat('h:mm a').format(entry.time);
 
@@ -448,10 +463,7 @@ class HomeScreen extends StatelessWidget {
           color: Colors.redAccent.withOpacity(0.8),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(
-          Icons.delete_rounded,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.delete_rounded, color: Colors.white),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),

@@ -18,24 +18,26 @@ class DrinkEntry {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'icon': icon,
-        'oz': oz,
-        'hydration': hydration,
-        'time': time.toIso8601String(),
-        'source': source,
-      };
+    'id': id,
+    'name': name,
+    'icon': icon,
+    'oz': oz,
+    'hydration': hydration,
+    'time': time.toIso8601String(),
+    'source': source,
+  };
 
   factory DrinkEntry.fromJson(Map<String, dynamic> json) => DrinkEntry(
-        id: json['id'] as String? ?? DateTime.now().microsecondsSinceEpoch.toString(),
-        name: json['name'] as String,
-        icon: json['icon'] as String,
-        oz: (json['oz'] as num).toDouble(),
-        hydration: (json['hydration'] as num).toDouble(),
-        time: DateTime.parse(json['time'] as String),
-        source: json['source'] as String,
-      );
+    id:
+        json['id'] as String? ??
+        DateTime.now().microsecondsSinceEpoch.toString(),
+    name: json['name'] as String,
+    icon: json['icon'] as String,
+    oz: (json['oz'] as num).toDouble(),
+    hydration: (json['hydration'] as num).toDouble(),
+    time: DateTime.parse(json['time'] as String),
+    source: json['source'] as String,
+  );
 
   DrinkEntry copyWith({
     String? id,

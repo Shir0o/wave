@@ -13,10 +13,7 @@ import 'package:wave/theme/app_theme.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppState(),
-      child: const WaveApp(),
-    ),
+    ChangeNotifierProvider(create: (_) => AppState(), child: const WaveApp()),
   );
 }
 
@@ -26,7 +23,9 @@ class WaveApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     return MaterialApp(
       title: 'Wave - Hydration Tracker',
@@ -36,17 +35,13 @@ class WaveApp extends StatelessWidget {
         brightness: Brightness.light,
         scaffoldBackgroundColor: theme.bg,
         useMaterial3: true,
-        textTheme: GoogleFonts.fredokaTextTheme(
-          ThemeData.light().textTheme,
-        ),
+        textTheme: GoogleFonts.fredokaTextTheme(ThemeData.light().textTheme),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: theme.bg,
         useMaterial3: true,
-        textTheme: GoogleFonts.fredokaTextTheme(
-          ThemeData.dark().textTheme,
-        ),
+        textTheme: GoogleFonts.fredokaTextTheme(ThemeData.dark().textTheme),
       ),
       home: const MainNavigationWrapper(),
     );
@@ -59,7 +54,9 @@ class MainNavigationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     // Handle full-screen transitions outside bottom nav
     if (state.currentScreen == 'onboard') {
@@ -106,14 +103,14 @@ class MainNavigationWrapper extends StatelessWidget {
                   builder: (context, val, child) {
                     return Transform.translate(
                       offset: Offset(0, 10 * (1 - val)),
-                      child: Opacity(
-                        opacity: val,
-                        child: child,
-                      ),
+                      child: Opacity(opacity: val, child: child),
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.toastBg,
                       borderRadius: BorderRadius.circular(20),
@@ -258,11 +255,7 @@ class MainNavigationWrapper extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              Icon(icon, color: color, size: 24),
               const SizedBox(height: 3),
               Text(
                 label,

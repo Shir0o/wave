@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 class ParsedItem {
   final String name;
@@ -18,22 +17,22 @@ class ParsedItem {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'icon': icon,
-        'oz': oz,
-        'hydration': hydration,
-        'factor': factor,
-        'qty': qty,
-      };
+    'name': name,
+    'icon': icon,
+    'oz': oz,
+    'hydration': hydration,
+    'factor': factor,
+    'qty': qty,
+  };
 
   factory ParsedItem.fromJson(Map<String, dynamic> json) => ParsedItem(
-        name: json['name'] as String,
-        icon: json['icon'] as String,
-        oz: (json['oz'] as num).toDouble(),
-        hydration: (json['hydration'] as num).toDouble(),
-        factor: (json['factor'] as num).toDouble(),
-        qty: (json['qty'] as num).toDouble(),
-      );
+    name: json['name'] as String,
+    icon: json['icon'] as String,
+    oz: (json['oz'] as num).toDouble(),
+    hydration: (json['hydration'] as num).toDouble(),
+    factor: (json['factor'] as num).toDouble(),
+    qty: (json['qty'] as num).toDouble(),
+  );
 }
 
 class HydrationParseResult {
@@ -53,7 +52,8 @@ class HydrationParseResult {
 class ContainerRule {
   final RegExp re;
   final double oz;
-  ContainerRule(String pattern, this.oz) : re = RegExp(pattern, caseSensitive: false);
+  ContainerRule(String pattern, this.oz)
+    : re = RegExp(pattern, caseSensitive: false);
 }
 
 class DrinkRule {
@@ -62,7 +62,7 @@ class DrinkRule {
   final String icon;
   final double factor;
   DrinkRule(String pattern, this.name, this.icon, this.factor)
-      : re = RegExp(pattern, caseSensitive: false);
+    : re = RegExp(pattern, caseSensitive: false);
 }
 
 class HydrationParser {
@@ -101,16 +101,56 @@ class HydrationParser {
   ];
 
   static final List<DrinkRule> drinks = [
-    DrinkRule(r'electrolyte|lmnt|liquid iv|pedialyte', 'Electrolytes', 'bolt', 1.1),
-    DrinkRule(r'sparkling|seltzer|soda water|club soda', 'Sparkling water', 'bubble_chart', 1.0),
+    DrinkRule(
+      r'electrolyte|lmnt|liquid iv|pedialyte',
+      'Electrolytes',
+      'bolt',
+      1.1,
+    ),
+    DrinkRule(
+      r'sparkling|seltzer|soda water|club soda',
+      'Sparkling water',
+      'bubble_chart',
+      1.0,
+    ),
     DrinkRule(r'\bwater\b|h2o|hydrate', 'Water', 'water_drop', 1.0),
-    DrinkRule(r'matcha|green tea|herbal|chamomile|\btea\b', 'Tea', 'emoji_food_beverage', 0.9),
-    DrinkRule(r'latte|cappuccino|cappucino|mocha|americano|cold brew|espresso|coffee|flat white', 'Coffee', 'local_cafe', 0.8),
+    DrinkRule(
+      r'matcha|green tea|herbal|chamomile|\btea\b',
+      'Tea',
+      'emoji_food_beverage',
+      0.9,
+    ),
+    DrinkRule(
+      r'latte|cappuccino|cappucino|mocha|americano|cold brew|espresso|coffee|flat white',
+      'Coffee',
+      'local_cafe',
+      0.8,
+    ),
     DrinkRule(r'smoothie|juice|lemonade', 'Juice', 'local_bar', 0.85),
-    DrinkRule(r'oat milk|almond milk|\bmilk\b|latte milk', 'Milk', 'grocery', 0.9),
-    DrinkRule(r'gatorade|powerade|sports drink|energy drink', 'Sports drink', 'sports_bar', 0.9),
-    DrinkRule(r'soda|cola|coke|pepsi|sprite|fanta|pop\b', 'Soft drink', 'local_drink', 0.75),
-    DrinkRule(r'\b(beer|wine|cocktail|whiskey|vodka|margarita|alcohol)\b', 'Alcohol', 'sports_bar', 0.4),
+    DrinkRule(
+      r'oat milk|almond milk|\bmilk\b|latte milk',
+      'Milk',
+      'grocery',
+      0.9,
+    ),
+    DrinkRule(
+      r'gatorade|powerade|sports drink|energy drink',
+      'Sports drink',
+      'sports_bar',
+      0.9,
+    ),
+    DrinkRule(
+      r'soda|cola|coke|pepsi|sprite|fanta|pop\b',
+      'Soft drink',
+      'local_drink',
+      0.75,
+    ),
+    DrinkRule(
+      r'\b(beer|wine|cocktail|whiskey|vodka|margarita|alcohol)\b',
+      'Alcohol',
+      'sports_bar',
+      0.4,
+    ),
   ];
 
   static final List<String> photoSamples = [
@@ -127,19 +167,31 @@ class HydrationParser {
     double? volOz;
     RegExpMatch? m;
 
-    m = RegExp(r'(\d+(?:\.\d+)?)\s*(ml|milliliters?|millilitres?)', caseSensitive: false).firstMatch(c);
+    m = RegExp(
+      r'(\d+(?:\.\d+)?)\s*(ml|milliliters?|millilitres?)',
+      caseSensitive: false,
+    ).firstMatch(c);
     if (m != null) {
       volOz = double.parse(m.group(1)!) * ML_TO_OZ;
     } else {
-      m = RegExp(r'(\d+(?:\.\d+)?)\s*(l|liters?|litres?)\b', caseSensitive: false).firstMatch(c);
+      m = RegExp(
+        r'(\d+(?:\.\d+)?)\s*(l|liters?|litres?)\b',
+        caseSensitive: false,
+      ).firstMatch(c);
       if (m != null) {
         volOz = double.parse(m.group(1)!) * L_TO_OZ;
       } else {
-        m = RegExp(r'(\d+(?:\.\d+)?)\s*(fl\s*oz|ounces?|oz)\b', caseSensitive: false).firstMatch(c);
+        m = RegExp(
+          r'(\d+(?:\.\d+)?)\s*(fl\s*oz|ounces?|oz)\b',
+          caseSensitive: false,
+        ).firstMatch(c);
         if (m != null) {
           volOz = double.parse(m.group(1)!);
         } else {
-          m = RegExp(r'(\d+(?:\.\d+)?)\s*cups?\b', caseSensitive: false).firstMatch(c);
+          m = RegExp(
+            r'(\d+(?:\.\d+)?)\s*cups?\b',
+            caseSensitive: false,
+          ).firstMatch(c);
           if (m != null) {
             volOz = double.parse(m.group(1)!) * 8.0;
           }
@@ -196,7 +248,9 @@ class HydrationParser {
     } else if (baseOz != null) {
       oz = baseOz * qty;
     } else {
-      oz = 12.0 * qty; // drink named without container -> assume a serving (12 oz)
+      oz =
+          12.0 *
+          qty; // drink named without container -> assume a serving (12 oz)
     }
 
     final hydration = oz * factor;
@@ -206,19 +260,27 @@ class HydrationParser {
       oz: oz.roundToDouble(),
       hydration: hydration.roundToDouble(),
       factor: factor,
-      qty: qtyExplicit
-          ? qty
-          : (baseOz != null || volOz != null ? qty : 1.0),
+      qty: qtyExplicit ? qty : (baseOz != null || volOz != null ? qty : 1.0),
     );
   }
 
   static HydrationParseResult parse(String text) {
     if (text.trim().isEmpty) {
-      return HydrationParseResult(items: [], oz: 0.0, hydration: 0.0, confidence: 0.0);
+      return HydrationParseResult(
+        items: [],
+        oz: 0.0,
+        hydration: 0.0,
+        confidence: 0.0,
+      );
     }
 
     // split clauses by comma, semicolon, "and", "&", "+", "with", "plus"
-    final clauses = text.split(RegExp(r'\s*(?:,|;|\band\b|&|\+|\bwith\b|\bplus\b)\s*', caseSensitive: false));
+    final clauses = text.split(
+      RegExp(
+        r'\s*(?:,|;|\band\b|&|\+|\bwith\b|\bplus\b)\s*',
+        caseSensitive: false,
+      ),
+    );
     final items = <ParsedItem>[];
 
     for (final cl in clauses) {
@@ -231,18 +293,23 @@ class HydrationParser {
     // fallback: nothing matched -> assume a glass of water, low confidence
     double confidence = items.isNotEmpty ? 0.92 : 0.4;
     if (items.isEmpty && text.trim().isNotEmpty) {
-      items.add(ParsedItem(
-        name: 'Water',
-        icon: 'water_drop',
-        oz: 8.0,
-        hydration: 8.0,
-        factor: 1.0,
-        qty: 1.0,
-      ));
+      items.add(
+        ParsedItem(
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 8.0,
+          hydration: 8.0,
+          factor: 1.0,
+          qty: 1.0,
+        ),
+      );
     }
 
     double totalOz = items.fold(0.0, (sum, item) => sum + item.oz);
-    double totalHydration = items.fold(0.0, (sum, item) => sum + item.hydration);
+    double totalHydration = items.fold(
+      0.0,
+      (sum, item) => sum + item.hydration,
+    );
 
     return HydrationParseResult(
       items: items,

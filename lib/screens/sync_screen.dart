@@ -10,13 +10,17 @@ class SyncScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     // Health Connect Card Colors
     final connCardBg = state.healthConnectConnected
         ? const [Color(0xFF2FC4DC), Color(0xFF1F8FD0)]
         : [theme.text3, theme.text2];
-    final connLabel = state.healthConnectConnected ? 'Connected & syncing' : 'Not connected';
+    final connLabel = state.healthConnectConnected
+        ? 'Connected & syncing'
+        : 'Not connected';
 
     final otherApps = [
       {'name': 'Google Fit', 'status': 'Connected', 'color': theme.accent2},
@@ -132,7 +136,9 @@ class SyncScreen extends StatelessWidget {
                             ),
                           ),
                           ElevatedButton.icon(
-                            onPressed: state.healthConnectConnected ? () => state.syncNow() : null,
+                            onPressed: state.healthConnectConnected
+                                ? () => state.syncNow()
+                                : null,
                             icon: const Icon(Icons.sync_rounded, size: 17),
                             label: const Text('Sync now'),
                             style: ElevatedButton.styleFrom(
@@ -141,7 +147,10 @@ class SyncScreen extends StatelessWidget {
                                   ? const Color(0xFF1F8FD0)
                                   : theme.text3,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
@@ -183,10 +192,8 @@ class SyncScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.permissions.length,
-                  separatorBuilder: (context, index) => Divider(
-                    color: theme.divider2,
-                    height: 1,
-                  ),
+                  separatorBuilder: (context, index) =>
+                      Divider(color: theme.divider2, height: 1),
                   itemBuilder: (context, index) {
                     final perm = state.permissions[index];
                     final bool enabled = perm['enabled'] == true;
@@ -253,7 +260,10 @@ class SyncScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final app = otherApps[index];
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.surface,
                       borderRadius: BorderRadius.circular(18),
@@ -295,7 +305,11 @@ class SyncScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () => state.navigateTo('onboard'),
-                  icon: Icon(Icons.replay_rounded, color: theme.text2, size: 19),
+                  icon: Icon(
+                    Icons.replay_rounded,
+                    color: theme.text2,
+                    size: 19,
+                  ),
                   label: const Text('Replay setup'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.surface,

@@ -29,11 +29,31 @@ class AppState extends ChangeNotifier {
   bool _healthConnectConnected = true;
   String _lastSyncStr = '2 min ago';
   List<Map<String, dynamic>> _permissions = [
-    {'label': 'Read hydration', 'desc': 'Pull water logged in other apps', 'enabled': true},
-    {'label': 'Write hydration', 'desc': 'Save your logs to Health Connect', 'enabled': true},
-    {'label': 'Nutrition', 'desc': 'Caffeine & calories from drinks', 'enabled': true},
-    {'label': 'Activity & workouts', 'desc': 'Raise your goal on active days', 'enabled': true},
-    {'label': 'Body weight', 'desc': 'Personalize your daily target', 'enabled': false},
+    {
+      'label': 'Read hydration',
+      'desc': 'Pull water logged in other apps',
+      'enabled': true,
+    },
+    {
+      'label': 'Write hydration',
+      'desc': 'Save your logs to Health Connect',
+      'enabled': true,
+    },
+    {
+      'label': 'Nutrition',
+      'desc': 'Caffeine & calories from drinks',
+      'enabled': true,
+    },
+    {
+      'label': 'Activity & workouts',
+      'desc': 'Raise your goal on active days',
+      'enabled': true,
+    },
+    {
+      'label': 'Body weight',
+      'desc': 'Personalize your daily target',
+      'enabled': false,
+    },
   ];
 
   // AI log screen transient states
@@ -133,7 +153,9 @@ class AppState extends ChangeNotifier {
       final permsJson = prefs.getString('permissions');
       if (permsJson != null) {
         final List<dynamic> decoded = jsonDecode(permsJson);
-        _permissions = decoded.map((p) => Map<String, dynamic>.from(p)).toList();
+        _permissions = decoded
+            .map((p) => Map<String, dynamic>.from(p))
+            .toList();
       }
       notifyListeners();
     } catch (e) {
@@ -203,39 +225,45 @@ class AppState extends ChangeNotifier {
 
   // Quick Add convenience methods
   void quickAddGlass() {
-    addDrinkEntry(DrinkEntry(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      name: 'Water',
-      icon: 'water_drop',
-      oz: 8.0,
-      hydration: 8.0,
-      time: DateTime.now(),
-      source: 'Quick add',
-    ));
+    addDrinkEntry(
+      DrinkEntry(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        name: 'Water',
+        icon: 'water_drop',
+        oz: 8.0,
+        hydration: 8.0,
+        time: DateTime.now(),
+        source: 'Quick add',
+      ),
+    );
   }
 
   void quickAddBottle() {
-    addDrinkEntry(DrinkEntry(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      name: 'Water',
-      icon: 'water_drop',
-      oz: 16.0,
-      hydration: 16.0,
-      time: DateTime.now(),
-      source: 'Quick add',
-    ));
+    addDrinkEntry(
+      DrinkEntry(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        name: 'Water',
+        icon: 'water_drop',
+        oz: 16.0,
+        hydration: 16.0,
+        time: DateTime.now(),
+        source: 'Quick add',
+      ),
+    );
   }
 
   void quickAddCoffee() {
-    addDrinkEntry(DrinkEntry(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      name: 'Coffee',
-      icon: 'local_cafe',
-      oz: 12.0,
-      hydration: 10.0,
-      time: DateTime.now(),
-      source: 'Quick add',
-    ));
+    addDrinkEntry(
+      DrinkEntry(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        name: 'Coffee',
+        icon: 'local_cafe',
+        oz: 12.0,
+        hydration: 10.0,
+        time: DateTime.now(),
+        source: 'Quick add',
+      ),
+    );
   }
 
   // Remove Entry
@@ -284,15 +312,17 @@ class AppState extends ChangeNotifier {
     if (_aiResult == null || _aiResult!.items.isEmpty) return;
     final now = DateTime.now();
     for (final parsed in _aiResult!.items) {
-      _entries.add(DrinkEntry(
-        id: '${now.microsecondsSinceEpoch}_${parsed.name}',
-        name: parsed.name,
-        icon: parsed.icon,
-        oz: parsed.oz,
-        hydration: parsed.hydration,
-        time: now,
-        source: 'AI log',
-      ));
+      _entries.add(
+        DrinkEntry(
+          id: '${now.microsecondsSinceEpoch}_${parsed.name}',
+          name: parsed.name,
+          icon: parsed.icon,
+          oz: parsed.oz,
+          hydration: parsed.hydration,
+          time: now,
+          source: 'AI log',
+        ),
+      );
     }
     showToast('Logged +${_aiResult!.hydration.round()} oz');
     _aiText = '';
@@ -335,7 +365,9 @@ class AppState extends ChangeNotifier {
   void toggleHealthConnect() {
     _healthConnectConnected = !_healthConnectConnected;
     _lastSyncStr = _healthConnectConnected ? 'just now' : _lastSyncStr;
-    showToast(_healthConnectConnected ? 'Connected to Health Connect' : 'Disconnected');
+    showToast(
+      _healthConnectConnected ? 'Connected to Health Connect' : 'Disconnected',
+    );
     _saveToPrefs();
     notifyListeners();
   }
@@ -376,7 +408,12 @@ class AppState extends ChangeNotifier {
   double get totalConsumedToday {
     final today = DateTime.now();
     return _entries
-        .where((e) => e.time.year == today.year && e.time.month == today.month && e.time.day == today.day)
+        .where(
+          (e) =>
+              e.time.year == today.year &&
+              e.time.month == today.month &&
+              e.time.day == today.day,
+        )
         .fold(0.0, (sum, e) => sum + e.hydration);
   }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:wave/main.dart';
@@ -8,10 +7,7 @@ void main() {
   testWidgets('WaveApp home screen smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (_) => AppState(),
-        child: const WaveApp(),
-      ),
+      ChangeNotifierProvider(create: (_) => AppState(), child: const WaveApp()),
     );
 
     // Pump a single frame to load UI, avoiding pumpAndSettle since infinite animations run

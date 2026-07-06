@@ -46,14 +46,17 @@ class _SmartLogScreenState extends State<SmartLogScreen>
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     // Sync state text with controller
     if (state.aiText != _controller.text && !state.aiListening) {
       _controller.text = state.aiText;
     }
 
-    final hasResult = state.aiResult != null && state.aiResult!.items.isNotEmpty;
+    final hasResult =
+        state.aiResult != null && state.aiResult!.items.isNotEmpty;
 
     return Scaffold(
       backgroundColor: theme.bg,
@@ -146,10 +149,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                         // Voice mic button
                         IconButton(
                           onPressed: () => state.triggerVoiceSim(),
-                          icon: Icon(
-                            Icons.mic_rounded,
-                            color: theme.accent2,
-                          ),
+                          icon: Icon(Icons.mic_rounded, color: theme.accent2),
                           style: IconButton.styleFrom(
                             backgroundColor: theme.surfaceSoft,
                             fixedSize: const Size(46, 46),
@@ -236,7 +236,10 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                     },
                     borderRadius: BorderRadius.circular(22),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 9,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.surface,
                         borderRadius: BorderRadius.circular(22),
@@ -301,7 +304,10 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                             ],
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.surfaceSoft,
                               borderRadius: BorderRadius.circular(20),
@@ -323,11 +329,15 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: state.aiResult!.items.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 8),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final it = state.aiResult!.items[index];
                           return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 11,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.surfaceTint,
                               borderRadius: BorderRadius.circular(18),
@@ -350,7 +360,8 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         it.name,
@@ -404,7 +415,9 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                                 elevation: 0,
                                 backgroundColor: theme.divider,
                                 foregroundColor: theme.text2,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -423,25 +436,33 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                             flex: 2,
                             child: ElevatedButton(
                               onPressed: () => state.confirmAiLog(),
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                shadowColor: Colors.transparent,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ).copyWith(
-                                elevation: ButtonStyleButton.allOrNull(0),
-                              ),
+                              style:
+                                  ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ).copyWith(
+                                    elevation: ButtonStyleButton.allOrNull(0),
+                                  ),
                               child: Ink(
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                                    colors: [
+                                      Color(0xFF2FC4DC),
+                                      Color(0xFF1F8FD0),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF1F8FD0).withOpacity(0.35),
+                                      color: const Color(
+                                        0xFF1F8FD0,
+                                      ).withOpacity(0.35),
                                       blurRadius: 20,
                                       offset: const Offset(0, 8),
                                     ),
@@ -477,7 +498,9 @@ class _SmartLogScreenState extends State<SmartLogScreen>
     return AnimatedBuilder(
       animation: _waveAnimController,
       builder: (context, child) {
-        final val = math.sin((_waveAnimController.value * 2 * math.pi) + delay * 10);
+        final val = math.sin(
+          (_waveAnimController.value * 2 * math.pi) + delay * 10,
+        );
         final height = 6.0 + (val.abs() * 10.0);
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 1.5),

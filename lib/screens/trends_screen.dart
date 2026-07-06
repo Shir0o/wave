@@ -11,14 +11,18 @@ class TrendsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     final weekData = state.weeklyHydrationData;
     final labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
 
     // Goal and stats calculations
     final goal = state.goalOz;
-    final double maxVal = (weekData.reduce(math.max) > goal ? weekData.reduce(math.max) : goal) * 1.08;
+    final double maxVal =
+        (weekData.reduce(math.max) > goal ? weekData.reduce(math.max) : goal) *
+        1.08;
     final int goalsHitCount = weekData.where((v) => v >= goal).length;
     final double avgVal = weekData.reduce((a, b) => a + b) / weekData.length;
     final double bestVal = weekData.reduce(math.max);
@@ -223,7 +227,9 @@ class TrendsScreen extends StatelessWidget {
                                     child: Container(
                                       width: 22,
                                       decoration: BoxDecoration(
-                                        color: isToday ? theme.accent : theme.bar,
+                                        color: isToday
+                                            ? theme.accent
+                                            : theme.bar,
                                         borderRadius: BorderRadius.circular(11),
                                       ),
                                     ),

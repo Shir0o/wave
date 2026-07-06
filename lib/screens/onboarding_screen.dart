@@ -10,7 +10,9 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme ? AppThemeColors.dark : AppThemeColors.light;
+    final theme = state.isDarkTheme
+        ? AppThemeColors.dark
+        : AppThemeColors.light;
 
     return Scaffold(
       backgroundColor: theme.bg,
@@ -24,7 +26,10 @@ class OnboardingScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 26.0,
+              vertical: 20.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -157,7 +162,10 @@ class OnboardingScreen extends StatelessWidget {
                 const SizedBox(height: 14),
                 // Health Connect Consent Tile
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.surface,
                     borderRadius: BorderRadius.circular(24),
@@ -225,9 +233,7 @@ class OnboardingScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
                       ),
-                    ).copyWith(
-                      elevation: ButtonStyleButton.allOrNull(0),
-                    ),
+                    ).copyWith(elevation: ButtonStyleButton.allOrNull(0)),
                     child: Ink(
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
