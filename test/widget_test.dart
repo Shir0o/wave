@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wave/main.dart';
 import 'package:wave/state/app_state.dart';
+import 'mock_health.dart';
 
 class NoTransitionsBuilder extends PageTransitionsBuilder {
   const NoTransitionsBuilder();
@@ -22,6 +23,7 @@ class NoTransitionsBuilder extends PageTransitionsBuilder {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  mockPlatformChannels();
 
   group('WaveApp Integration Tests', () {
     setUp(() {

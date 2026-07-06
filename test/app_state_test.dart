@@ -2,10 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wave/models/drink_entry.dart';
 import 'package:wave/state/app_state.dart';
+import 'mock_health.dart';
 
 void main() {
   // Ensure Flutter binding is initialized for SharedPreferences mock
   TestWidgetsFlutterBinding.ensureInitialized();
+  mockPlatformChannels();
 
   group('AppState Tests', () {
     setUp(() {

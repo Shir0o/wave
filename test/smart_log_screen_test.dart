@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wave/screens/smart_log_screen.dart';
 import 'package:wave/state/app_state.dart';
+import 'mock_health.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  mockPlatformChannels();
 
   group('SmartLogScreen Widget Tests', () {
     setUp(() {
