@@ -75,7 +75,7 @@ class AppState extends ChangeNotifier {
 
   // Getters
   String get currentScreen => _currentScreen;
-  
+
   double get goalOz {
     double baseGoal = _goalOz;
     if (_healthConnectConnected) {
@@ -88,7 +88,7 @@ class AppState extends ChangeNotifier {
     }
     return baseGoal;
   }
-  
+
   int get syncedSteps => _syncedSteps;
   double get syncedWeightLbs => _syncedWeightLbs;
   bool get isDarkTheme => _isDarkTheme;
@@ -449,7 +449,10 @@ class AppState extends ChangeNotifier {
       case 1: // Write hydration
         return [HealthDataType.WATER];
       case 2: // Nutrition
-        return [HealthDataType.DIETARY_CAFFEINE, HealthDataType.DIETARY_ENERGY_CONSUMED];
+        return [
+          HealthDataType.DIETARY_CAFFEINE,
+          HealthDataType.DIETARY_ENERGY_CONSUMED,
+        ];
       case 3: // Activity & workouts
         return [HealthDataType.STEPS, HealthDataType.ACTIVE_ENERGY_BURNED];
       case 4: // Body weight
@@ -480,7 +483,7 @@ class AppState extends ChangeNotifier {
     try {
       final List<HealthDataType> types = [];
       final List<HealthDataAccess> accessList = [];
-      
+
       for (int i = 0; i < _permissions.length; i++) {
         if (_permissions[i]['enabled'] == true) {
           final typesForPerm = _mapPermissionToTypes(i);
@@ -498,10 +501,13 @@ class AppState extends ChangeNotifier {
           }
         }
       }
-      
+
       if (types.isEmpty) return true;
-      
-      bool granted = await Health().requestAuthorization(types, permissions: accessList);
+
+      bool granted = await Health().requestAuthorization(
+        types,
+        permissions: accessList,
+      );
       return granted;
     } catch (e) {
       debugPrint('Error requesting health permissions: $e');
@@ -537,19 +543,22 @@ class AppState extends ChangeNotifier {
 
       // 1. Sync Hydration logs (Read Hydration)
       if (_permissions[0]['enabled'] == true) {
-        List<HealthDataPoint> waterPoints = await Health().getHealthDataFromTypes(
-          startTime: midnight,
-          endTime: now,
-          types: [HealthDataType.WATER],
-        );
+        List<HealthDataPoint> waterPoints = await Health()
+            .getHealthDataFromTypes(
+              startTime: midnight,
+              endTime: now,
+              types: [HealthDataType.WATER],
+            );
         for (var point in waterPoints) {
           if (point.value is NumericHealthValue) {
             if (point.sourceId == 'com.twang.wave.wave') continue;
             if (_entries.any((e) => e.id == point.uuid)) continue;
 
-            final double liters = (point.value as NumericHealthValue).numericValue.toDouble();
+            final double liters = (point.value as NumericHealthValue)
+                .numericValue
+                .toDouble();
             final double oz = liters * 33.814;
-            
+
             _entries.add(
               DrinkEntry(
                 id: point.uuid,
@@ -567,11 +576,12 @@ class AppState extends ChangeNotifier {
 
       // 2. Sync Steps / Activity
       if (_permissions[3]['enabled'] == true) {
-        List<HealthDataPoint> stepsPoints = await Health().getHealthDataFromTypes(
-          startTime: midnight,
-          endTime: now,
-          types: [HealthDataType.STEPS],
-        );
+        List<HealthDataPoint> stepsPoints = await Health()
+            .getHealthDataFromTypes(
+              startTime: midnight,
+              endTime: now,
+              types: [HealthDataType.STEPS],
+            );
         int steps = 0;
         for (var point in stepsPoints) {
           if (point.value is NumericHealthValue) {
@@ -583,16 +593,19 @@ class AppState extends ChangeNotifier {
 
       // 3. Sync Body Weight
       if (_permissions[4]['enabled'] == true) {
-        List<HealthDataPoint> weightPoints = await Health().getHealthDataFromTypes(
-          startTime: now.subtract(const Duration(days: 30)),
-          endTime: now,
-          types: [HealthDataType.WEIGHT],
-        );
+        List<HealthDataPoint> weightPoints = await Health()
+            .getHealthDataFromTypes(
+              startTime: now.subtract(const Duration(days: 30)),
+              endTime: now,
+              types: [HealthDataType.WEIGHT],
+            );
         if (weightPoints.isNotEmpty) {
           weightPoints.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
           var newestWeight = weightPoints.first;
           if (newestWeight.value is NumericHealthValue) {
-            double weightKg = (newestWeight.value as NumericHealthValue).numericValue.toDouble();
+            double weightKg = (newestWeight.value as NumericHealthValue)
+                .numericValue
+                .toDouble();
             _syncedWeightLbs = weightKg * 2.20462;
           }
         }
@@ -621,7 +634,10 @@ class AppState extends ChangeNotifier {
     if (_healthConnectConnected && newval) {
       final types = _mapPermissionToTypes(index);
       final access = _mapPermissionToAccess(index);
-      bool granted = await Health().requestAuthorization(types, permissions: access);
+      bool granted = await Health().requestAuthorization(
+        types,
+        permissions: access,
+      );
       if (granted) {
         showToast('Permission granted');
         syncNow();

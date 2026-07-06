@@ -1,4 +1,3 @@
-
 class ParsedItem {
   final String name;
   final String icon;
