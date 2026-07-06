@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:health/health.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wave/models/drink_entry.dart';
 import 'package:wave/utils/hydration_parser.dart';
@@ -56,6 +57,10 @@ class AppState extends ChangeNotifier {
     },
   ];
 
+  // Health Connect synced variables
+  int _syncedSteps = 0;
+  double _syncedWeightLbs = 0.0;
+
   // AI log screen transient states
   String _aiText = '';
   HydrationParseResult? _aiResult;
@@ -70,7 +75,22 @@ class AppState extends ChangeNotifier {
 
   // Getters
   String get currentScreen => _currentScreen;
-  double get goalOz => _goalOz;
+  
+  double get goalOz {
+    double baseGoal = _goalOz;
+    if (_healthConnectConnected) {
+      if (_permissions[4]['enabled'] == true && _syncedWeightLbs > 0.0) {
+        baseGoal = _syncedWeightLbs * 0.5;
+      }
+      if (_permissions[3]['enabled'] == true) {
+        baseGoal += (_syncedSteps / 1000.0) * 4.0;
+      }
+    }
+    return baseGoal;
+  }
+  
+  int get syncedSteps => _syncedSteps;
+  double get syncedWeightLbs => _syncedWeightLbs;
   bool get isDarkTheme => _isDarkTheme;
   List<DrinkEntry> get entries => _entries;
   bool get adaptiveReminders => _adaptiveReminders;
@@ -91,6 +111,14 @@ class AppState extends ChangeNotifier {
   // Constructor loads persisted settings
   AppState() {
     _loadFromPrefs();
+    _initHealth();
+  }
+
+  void _initHealth() {
+    Health().configure();
+    if (_healthConnectConnected) {
+      syncNow(silent: true);
+    }
   }
 
   // Load from local storage
@@ -102,6 +130,8 @@ class AppState extends ChangeNotifier {
       _adaptiveReminders = prefs.getBool('adaptiveReminders') ?? true;
       _reminderInterval = prefs.getInt('reminderInterval') ?? 90;
       _healthConnectConnected = prefs.getBool('healthConnectConnected') ?? true;
+      _syncedSteps = prefs.getInt('syncedSteps') ?? 0;
+      _syncedWeightLbs = prefs.getDouble('syncedWeightLbs') ?? 0.0;
 
       // Load entries
       final entriesJson = prefs.getString('entries');
@@ -172,6 +202,8 @@ class AppState extends ChangeNotifier {
       await prefs.setBool('adaptiveReminders', _adaptiveReminders);
       await prefs.setInt('reminderInterval', _reminderInterval);
       await prefs.setBool('healthConnectConnected', _healthConnectConnected);
+      await prefs.setInt('syncedSteps', _syncedSteps);
+      await prefs.setDouble('syncedWeightLbs', _syncedWeightLbs);
 
       final entriesJson = jsonEncode(_entries.map((e) => e.toJson()).toList());
       await prefs.setString('entries', entriesJson);
@@ -221,6 +253,54 @@ class AppState extends ChangeNotifier {
     showToast('+${entry.oz.round()} oz ${entry.name}');
     _saveToPrefs();
     notifyListeners();
+    _postLogToHealthConnect(entry);
+  }
+
+  // Health Connect upload helpers
+  void _postLogToHealthConnect(DrinkEntry entry) {
+    if (_healthConnectConnected) {
+      if (_permissions[1]['enabled'] == true) {
+        _writeHydrationToHealthConnect(entry);
+      }
+      if (_permissions[2]['enabled'] == true) {
+        _writeNutritionToHealthConnect(entry);
+      }
+    }
+  }
+
+  Future<void> _writeHydrationToHealthConnect(DrinkEntry entry) async {
+    try {
+      final double liters = entry.hydration / 33.814;
+      bool success = await Health().writeHealthData(
+        value: liters,
+        type: HealthDataType.WATER,
+        startTime: entry.time,
+        endTime: entry.time,
+      );
+      if (success) {
+        debugPrint('Successfully wrote hydration to Health Connect: $liters L');
+      } else {
+        debugPrint('Failed to write hydration to Health Connect');
+      }
+    } catch (e) {
+      debugPrint('Error writing hydration to Health Connect: $e');
+    }
+  }
+
+  Future<void> _writeNutritionToHealthConnect(DrinkEntry entry) async {
+    try {
+      if (entry.name.toLowerCase() == 'coffee') {
+        final double caffeineMg = entry.oz * 12.5;
+        await Health().writeHealthData(
+          value: caffeineMg,
+          type: HealthDataType.DIETARY_CAFFEINE,
+          startTime: entry.time,
+          endTime: entry.time,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error writing nutrition to Health Connect: $e');
+    }
   }
 
   // Quick Add convenience methods
@@ -312,17 +392,17 @@ class AppState extends ChangeNotifier {
     if (_aiResult == null || _aiResult!.items.isEmpty) return;
     final now = DateTime.now();
     for (final parsed in _aiResult!.items) {
-      _entries.add(
-        DrinkEntry(
-          id: '${now.microsecondsSinceEpoch}_${parsed.name}',
-          name: parsed.name,
-          icon: parsed.icon,
-          oz: parsed.oz,
-          hydration: parsed.hydration,
-          time: now,
-          source: 'AI log',
-        ),
+      final entry = DrinkEntry(
+        id: '${now.microsecondsSinceEpoch}_${parsed.name}',
+        name: parsed.name,
+        icon: parsed.icon,
+        oz: parsed.oz,
+        hydration: parsed.hydration,
+        time: now,
+        source: 'AI log',
       );
+      _entries.add(entry);
+      _postLogToHealthConnect(entry);
     }
     showToast('Logged +${_aiResult!.hydration.round()} oz');
     _aiText = '';
@@ -361,27 +441,197 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Health Connect config
-  void toggleHealthConnect() {
-    _healthConnectConnected = !_healthConnectConnected;
-    _lastSyncStr = _healthConnectConnected ? 'just now' : _lastSyncStr;
-    showToast(
-      _healthConnectConnected ? 'Connected to Health Connect' : 'Disconnected',
-    );
+  // Health Connect real operations
+  List<HealthDataType> _mapPermissionToTypes(int index) {
+    switch (index) {
+      case 0: // Read hydration
+        return [HealthDataType.WATER];
+      case 1: // Write hydration
+        return [HealthDataType.WATER];
+      case 2: // Nutrition
+        return [HealthDataType.DIETARY_CAFFEINE, HealthDataType.DIETARY_ENERGY_CONSUMED];
+      case 3: // Activity & workouts
+        return [HealthDataType.STEPS, HealthDataType.ACTIVE_ENERGY_BURNED];
+      case 4: // Body weight
+        return [HealthDataType.WEIGHT];
+      default:
+        return [];
+    }
+  }
+
+  List<HealthDataAccess> _mapPermissionToAccess(int index) {
+    switch (index) {
+      case 0:
+        return [HealthDataAccess.READ];
+      case 1:
+        return [HealthDataAccess.WRITE];
+      case 2:
+        return [HealthDataAccess.READ_WRITE, HealthDataAccess.READ_WRITE];
+      case 3:
+        return [HealthDataAccess.READ, HealthDataAccess.READ];
+      case 4:
+        return [HealthDataAccess.READ];
+      default:
+        return [];
+    }
+  }
+
+  Future<bool> _requestHealthPermissions() async {
+    try {
+      final List<HealthDataType> types = [];
+      final List<HealthDataAccess> accessList = [];
+      
+      for (int i = 0; i < _permissions.length; i++) {
+        if (_permissions[i]['enabled'] == true) {
+          final typesForPerm = _mapPermissionToTypes(i);
+          final accessForPerm = _mapPermissionToAccess(i);
+          for (int j = 0; j < typesForPerm.length; j++) {
+            if (!types.contains(typesForPerm[j])) {
+              types.add(typesForPerm[j]);
+              accessList.add(accessForPerm[j]);
+            } else {
+              final idx = types.indexOf(typesForPerm[j]);
+              if (accessList[idx] != accessForPerm[j]) {
+                accessList[idx] = HealthDataAccess.READ_WRITE;
+              }
+            }
+          }
+        }
+      }
+      
+      if (types.isEmpty) return true;
+      
+      bool granted = await Health().requestAuthorization(types, permissions: accessList);
+      return granted;
+    } catch (e) {
+      debugPrint('Error requesting health permissions: $e');
+      return false;
+    }
+  }
+
+  void toggleHealthConnect() async {
+    if (!_healthConnectConnected) {
+      bool granted = await _requestHealthPermissions();
+      if (granted) {
+        _healthConnectConnected = true;
+        _lastSyncStr = 'just now';
+        showToast('Connected to Health Connect');
+        syncNow();
+      } else {
+        showToast('Permission denied');
+      }
+    } else {
+      _healthConnectConnected = false;
+      showToast('Disconnected');
+    }
     _saveToPrefs();
     notifyListeners();
   }
 
-  void syncNow() {
-    _lastSyncStr = 'just now';
-    showToast('Synced with Health Connect');
-    notifyListeners();
+  Future<void> syncNow({bool silent = false}) async {
+    if (!_healthConnectConnected) return;
+
+    try {
+      final now = DateTime.now();
+      final midnight = DateTime(now.year, now.month, now.day);
+
+      // 1. Sync Hydration logs (Read Hydration)
+      if (_permissions[0]['enabled'] == true) {
+        List<HealthDataPoint> waterPoints = await Health().getHealthDataFromTypes(
+          startTime: midnight,
+          endTime: now,
+          types: [HealthDataType.WATER],
+        );
+        for (var point in waterPoints) {
+          if (point.value is NumericHealthValue) {
+            if (point.sourceId == 'com.twang.wave.wave') continue;
+            if (_entries.any((e) => e.id == point.uuid)) continue;
+
+            final double liters = (point.value as NumericHealthValue).numericValue.toDouble();
+            final double oz = liters * 33.814;
+            
+            _entries.add(
+              DrinkEntry(
+                id: point.uuid,
+                name: 'Water',
+                icon: 'water_drop',
+                oz: oz.roundToDouble(),
+                hydration: oz.roundToDouble(),
+                time: point.dateFrom,
+                source: 'Health Connect',
+              ),
+            );
+          }
+        }
+      }
+
+      // 2. Sync Steps / Activity
+      if (_permissions[3]['enabled'] == true) {
+        List<HealthDataPoint> stepsPoints = await Health().getHealthDataFromTypes(
+          startTime: midnight,
+          endTime: now,
+          types: [HealthDataType.STEPS],
+        );
+        int steps = 0;
+        for (var point in stepsPoints) {
+          if (point.value is NumericHealthValue) {
+            steps += (point.value as NumericHealthValue).numericValue.round();
+          }
+        }
+        _syncedSteps = steps;
+      }
+
+      // 3. Sync Body Weight
+      if (_permissions[4]['enabled'] == true) {
+        List<HealthDataPoint> weightPoints = await Health().getHealthDataFromTypes(
+          startTime: now.subtract(const Duration(days: 30)),
+          endTime: now,
+          types: [HealthDataType.WEIGHT],
+        );
+        if (weightPoints.isNotEmpty) {
+          weightPoints.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
+          var newestWeight = weightPoints.first;
+          if (newestWeight.value is NumericHealthValue) {
+            double weightKg = (newestWeight.value as NumericHealthValue).numericValue.toDouble();
+            _syncedWeightLbs = weightKg * 2.20462;
+          }
+        }
+      }
+
+      _lastSyncStr = 'just now';
+      if (!silent) {
+        showToast('Synced with Health Connect');
+      }
+      _saveToPrefs();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error syncing with Health Connect: $e');
+      if (!silent) {
+        showToast('Sync failed');
+      }
+    }
   }
 
-  void togglePermission(int index) {
-    _permissions[index]['enabled'] = !_permissions[index]['enabled'];
+  void togglePermission(int index) async {
+    final bool newval = !_permissions[index]['enabled'];
+    _permissions[index]['enabled'] = newval;
     _saveToPrefs();
     notifyListeners();
+
+    if (_healthConnectConnected && newval) {
+      final types = _mapPermissionToTypes(index);
+      final access = _mapPermissionToAccess(index);
+      bool granted = await Health().requestAuthorization(types, permissions: access);
+      if (granted) {
+        showToast('Permission granted');
+        syncNow();
+      } else {
+        _permissions[index]['enabled'] = false;
+        _saveToPrefs();
+        notifyListeners();
+        showToast('Permission denied');
+      }
+    }
   }
 
   // Onboarding controls
@@ -395,13 +645,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void finishOnboarding() {
+  void finishOnboarding() async {
     _goalOz = _onbGoal;
     _healthConnectConnected = _onbConnect;
     _currentScreen = 'home';
     showToast("You're all set");
     _saveToPrefs();
     notifyListeners();
+    if (_healthConnectConnected) {
+      bool granted = await _requestHealthPermissions();
+      if (granted) {
+        syncNow();
+      }
+    }
   }
 
   // Statistics calculation helpers
