@@ -48,3 +48,6 @@ app.*.map.json
 /design/
 .thumbnail
 
+# Agent Customizations
+AGENTS.md
+.agents/

@@ -59,84 +59,6 @@ class HomeScreen extends StatelessWidget {
                     waveColor2: theme.wave2,
                   ),
                 ),
-                // Header Top Bar overlays
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                        vertical: 10.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dateStr,
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: theme.text2,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                              Text(
-                                greeting,
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.text,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              // Theme Toggle
-                              IconButton(
-                                onPressed: () => state.toggleTheme(),
-                                icon: Icon(
-                                  state.isDarkTheme
-                                      ? Icons.light_mode_rounded
-                                      : Icons.dark_mode_rounded,
-                                  color: theme.accent,
-                                  size: 22,
-                                ),
-                                style: IconButton.styleFrom(
-                                  backgroundColor: theme.surface,
-                                  shadowColor: theme.shadow,
-                                  elevation: 4,
-                                  fixedSize: const Size(44, 44),
-                                ),
-                              ),
-                              const SizedBox(width: 9),
-                              // Health Connect Navigate
-                              IconButton(
-                                onPressed: () => state.navigateTo('sync'),
-                                icon: const Icon(
-                                  Icons.favorite_rounded,
-                                  color: Colors.redAccent,
-                                  size: 22,
-                                ),
-                                style: IconButton.styleFrom(
-                                  backgroundColor: theme.surface,
-                                  shadowColor: theme.shadow,
-                                  elevation: 4,
-                                  fixedSize: const Size(44, 44),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 // Center Percentage Metrics
                 Positioned.fill(
                   child: IgnorePointer(
@@ -215,6 +137,84 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                // Header Top Bar overlays
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 10.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dateStr,
+                                style: GoogleFonts.fredoka(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: theme.text2,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              Text(
+                                greeting,
+                                style: GoogleFonts.fredoka(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.text,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              // Theme Toggle
+                              IconButton(
+                                onPressed: () => state.toggleTheme(),
+                                icon: Icon(
+                                  state.isDarkTheme
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
+                                  color: theme.accent,
+                                  size: 22,
+                                ),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: theme.surface,
+                                  shadowColor: theme.shadow,
+                                  elevation: 4,
+                                  fixedSize: const Size(44, 44),
+                                ),
+                              ),
+                              const SizedBox(width: 9),
+                              // Health Connect Navigate
+                              IconButton(
+                                onPressed: () => state.navigateTo('sync'),
+                                icon: const Icon(
+                                  Icons.favorite_rounded,
+                                  color: Colors.redAccent,
+                                  size: 22,
+                                ),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: theme.surface,
+                                  shadowColor: theme.shadow,
+                                  elevation: 4,
+                                  fixedSize: const Size(44, 44),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
