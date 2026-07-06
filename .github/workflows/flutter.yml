@@ -33,5 +33,8 @@ jobs:
       - name: Analyze code
         run: flutter analyze --no-fatal-infos
 
-      - name: Run unit and widget tests
-        run: flutter test
+      - name: Run unit and widget tests with coverage
+        run: flutter test --coverage
+
+      - name: Verify code coverage threshold
+        run: dart tool/check_coverage.dart 90
