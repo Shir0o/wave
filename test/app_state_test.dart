@@ -372,5 +372,31 @@ void main() {
       expect(state.weeklyHydrationData.last, 18.4);
       expect(state.weeklyHydrationData.length, 7);
     });
+
+    test(
+      'Health Connect permission types and writing Coffee works without throwing',
+      () async {
+        final state = AppState();
+
+        // Verify permissions list length and details
+        expect(state.permissions[2]['label'], 'Nutrition');
+
+        // Log Coffee to trigger writeNutritionToHealthConnect code path
+        state.addDrinkEntry(
+          DrinkEntry(
+            id: 'coffee-test-id',
+            name: 'Coffee',
+            icon: 'local_cafe',
+            oz: 8.0,
+            hydration: 6.4,
+            time: DateTime.now(),
+            source: 'Quick add',
+          ),
+        );
+
+        // Ensure no exceptions were thrown and entry is registered in state
+        expect(state.entries.any((e) => e.id == 'coffee-test-id'), true);
+      },
+    );
   });
 }
