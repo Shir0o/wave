@@ -4,7 +4,9 @@ import 'package:wave/widgets/wave_painter.dart';
 
 void main() {
   group('WaveContainer and WavePainter Tests', () {
-    testWidgets('WaveContainer renders correctly and animates', (WidgetTester tester) async {
+    testWidgets('WaveContainer renders correctly and animates', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -36,7 +38,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
     });
 
-    testWidgets('WaveContainer didUpdateWidget triggers fill transition', (WidgetTester tester) async {
+    testWidgets('WaveContainer didUpdateWidget triggers fill transition', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

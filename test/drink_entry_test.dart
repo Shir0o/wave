@@ -86,11 +86,7 @@ void main() {
         source: 'Quick add',
       );
 
-      final copied = entry.copyWith(
-        id: 'new-id',
-        oz: 16.0,
-        hydration: 12.8,
-      );
+      final copied = entry.copyWith(id: 'new-id', oz: 16.0, hydration: 12.8);
 
       expect(copied.id, 'new-id');
       expect(copied.name, 'Coffee');

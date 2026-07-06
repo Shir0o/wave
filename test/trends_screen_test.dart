@@ -13,15 +13,15 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    testWidgets('Renders TrendsScreen with proper stats and charts', (WidgetTester tester) async {
+    testWidgets('Renders TrendsScreen with proper stats and charts', (
+      WidgetTester tester,
+    ) async {
       final state = AppState();
-      
+
       await tester.pumpWidget(
         ChangeNotifierProvider<AppState>.value(
           value: state,
-          child: const MaterialApp(
-            home: TrendsScreen(),
-          ),
+          child: const MaterialApp(home: TrendsScreen()),
         ),
       );
 

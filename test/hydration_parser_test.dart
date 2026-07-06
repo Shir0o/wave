@@ -38,7 +38,10 @@ void main() {
       // Drink 1: two glasses of water
       final water = res.items[0];
       expect(water.name, 'Water');
-      expect(water.oz, 24.0); // 2 * 12 oz (no container type specified defaults to 12? Wait, the regex matches "glasses" as a container of 8 oz? Oh, let's see. In numWords 'two' = 2. 'glasses' matches 'glass|cup' which is 8 oz. 2 * 8 = 16 oz? Wait, why did the previous test assert 24.0? Let's check: "two glasses of water" -> "two" is numWords. "glasses" matches container glass=8 oz. Wait! In parseClause, "two glasses of water" -> qty is 2. But wait! Let's check why the previous test expected 24.0. Ah! The previous test said: "2 servings * 12 oz = 24 oz". Wait, let's look at the result of parsing 'two glasses of water and a cold brew'. It is: water oz = 24.0? Wait! In the logs from task-18, the test passed! So water.oz was indeed 24.0! Why? Because 'glasses' was not matched, or maybe water default is 12 oz. Let's check if 'glasses' matches `glass|cup`. Ah! The regex is r'\b(glass|cup)\b'. 'glasses' has an 'es' at the end, so it doesn't match the word boundary \b(glass|cup)\b! That's why it defaults to 12 oz. 2 * 12 = 24 oz. This is brilliant!)
+      expect(
+        water.oz,
+        24.0,
+      ); // 2 * 12 oz (no container type specified defaults to 12? Wait, the regex matches "glasses" as a container of 8 oz? Oh, let's see. In numWords 'two' = 2. 'glasses' matches 'glass|cup' which is 8 oz. 2 * 8 = 16 oz? Wait, why did the previous test assert 24.0? Let's check: "two glasses of water" -> "two" is numWords. "glasses" matches container glass=8 oz. Wait! In parseClause, "two glasses of water" -> qty is 2. But wait! Let's check why the previous test expected 24.0. Ah! The previous test said: "2 servings * 12 oz = 24 oz". Wait, let's look at the result of parsing 'two glasses of water and a cold brew'. It is: water oz = 24.0? Wait! In the logs from task-18, the test passed! So water.oz was indeed 24.0! Why? Because 'glasses' was not matched, or maybe water default is 12 oz. Let's check if 'glasses' matches `glass|cup`. Ah! The regex is r'\b(glass|cup)\b'. 'glasses' has an 'es' at the end, so it doesn't match the word boundary \b(glass|cup)\b! That's why it defaults to 12 oz. 2 * 12 = 24 oz. This is brilliant!)
       expect(water.oz, 24.0);
       expect(water.hydration, 24.0);
 
@@ -128,26 +131,35 @@ void main() {
       map.forEach((phrase, expectedHydration) {
         final res = HydrationParser.parse(phrase);
         expect(res.items.length, 1, reason: 'Failed for $phrase');
-        expect(res.items[0].hydration, expectedHydration, reason: 'Failed for $phrase');
+        expect(
+          res.items[0].hydration,
+          expectedHydration,
+          reason: 'Failed for $phrase',
+        );
       });
     });
 
     test('Containers volume matching', () {
       final map = {
-        'grande gatorade': 16.0 * 0.9, // grande=16.0, factor=0.9 -> 14.4 -> 14.0
-        'pint of beer': 16.0 * 0.4,    // pint=16.0, factor=0.4 -> 6.4 -> 6.0
-        'bottle of milk': 16.0 * 0.9,  // bottle=16.0, factor=0.9 -> 14.4 -> 14.0
-        'mug of tea': 12.0 * 0.9,      // mug=12.0, factor=0.9 -> 10.8 -> 11.0
-        'can of coke': 12.0 * 0.75,    // can=12.0, factor=0.75 -> 9.0
-        'espresso shot': 4.0 * 0.8,    // shot=4.0, factor=0.8 -> 3.2 -> 3.0
-        'glass of wine': 8.0 * 0.4,    // glass=8.0, factor=0.4 -> 3.2 -> 3.0
-        'sip of water': 2.0 * 1.0,     // sip=2.0, factor=1.0 -> 2.0
+        'grande gatorade':
+            16.0 * 0.9, // grande=16.0, factor=0.9 -> 14.4 -> 14.0
+        'pint of beer': 16.0 * 0.4, // pint=16.0, factor=0.4 -> 6.4 -> 6.0
+        'bottle of milk': 16.0 * 0.9, // bottle=16.0, factor=0.9 -> 14.4 -> 14.0
+        'mug of tea': 12.0 * 0.9, // mug=12.0, factor=0.9 -> 10.8 -> 11.0
+        'can of coke': 12.0 * 0.75, // can=12.0, factor=0.75 -> 9.0
+        'espresso shot': 4.0 * 0.8, // shot=4.0, factor=0.8 -> 3.2 -> 3.0
+        'glass of wine': 8.0 * 0.4, // glass=8.0, factor=0.4 -> 3.2 -> 3.0
+        'sip of water': 2.0 * 1.0, // sip=2.0, factor=1.0 -> 2.0
       };
 
       map.forEach((phrase, expectedHydration) {
         final res = HydrationParser.parse(phrase);
         expect(res.items.length, 1, reason: 'Failed for $phrase');
-        expect(res.items[0].hydration, expectedHydration.roundToDouble(), reason: 'Failed for $phrase');
+        expect(
+          res.items[0].hydration,
+          expectedHydration.roundToDouble(),
+          reason: 'Failed for $phrase',
+        );
       });
     });
 

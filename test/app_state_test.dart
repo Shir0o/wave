@@ -12,27 +12,30 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('initialization with default settings when no preferences exist', () async {
-      final state = AppState();
-      // Wait for preferences to load asynchronously
-      await Future.delayed(const Duration(milliseconds: 100));
+    test(
+      'initialization with default settings when no preferences exist',
+      () async {
+        final state = AppState();
+        // Wait for preferences to load asynchronously
+        await Future.delayed(const Duration(milliseconds: 100));
 
-      expect(state.currentScreen, 'home');
-      expect(state.goalOz, 100.0);
-      expect(state.isDarkTheme, false);
-      expect(state.entries.length, 3); // mock default entries
-      expect(state.adaptiveReminders, true);
-      expect(state.reminderInterval, 90);
-      expect(state.healthConnectConnected, true);
-      expect(state.lastSyncStr, '2 min ago');
-      expect(state.permissions.length, 5);
-      expect(state.aiText, '');
-      expect(state.aiResult, isNull);
-      expect(state.aiListening, false);
-      expect(state.onbGoal, 100.0);
-      expect(state.onbConnect, true);
-      expect(state.toastMessage, isNull);
-    });
+        expect(state.currentScreen, 'home');
+        expect(state.goalOz, 100.0);
+        expect(state.isDarkTheme, false);
+        expect(state.entries.length, 3); // mock default entries
+        expect(state.adaptiveReminders, true);
+        expect(state.reminderInterval, 90);
+        expect(state.healthConnectConnected, true);
+        expect(state.lastSyncStr, '2 min ago');
+        expect(state.permissions.length, 5);
+        expect(state.aiText, '');
+        expect(state.aiResult, isNull);
+        expect(state.aiListening, false);
+        expect(state.onbGoal, 100.0);
+        expect(state.onbConnect, true);
+        expect(state.toastMessage, isNull);
+      },
+    );
 
     test('initialization loads settings from SharedPreferences', () async {
       SharedPreferences.setMockInitialValues({
@@ -41,7 +44,8 @@ void main() {
         'adaptiveReminders': false,
         'reminderInterval': 60,
         'healthConnectConnected': false,
-        'entries': '[{"id":"10","name":"Apple Juice","icon":"local_bar","oz":10.0,"hydration":8.5,"time":"2026-07-06T10:00:00Z","source":"AI"}]',
+        'entries':
+            '[{"id":"10","name":"Apple Juice","icon":"local_bar","oz":10.0,"hydration":8.5,"time":"2026-07-06T10:00:00Z","source":"AI"}]',
         'reminders': '[{"time":"10:00 AM","enabled":true}]',
         'permissions': '[{"label":"Test","desc":"Desc","enabled":false}]',
       });
@@ -86,7 +90,7 @@ void main() {
     test('toggleTheme updates theme setting and saves to prefs', () async {
       final state = AppState();
       await Future.delayed(const Duration(milliseconds: 50));
-      
+
       expect(state.isDarkTheme, false);
       state.toggleTheme();
       await Future.delayed(const Duration(milliseconds: 50));
@@ -221,7 +225,7 @@ void main() {
 
     test('incrementInterval and decrementInterval enforce bounds', () {
       final state = AppState();
-      
+
       // Standard interval starts at 90
       state.incrementInterval();
       expect(state.reminderInterval, 105);
@@ -230,13 +234,17 @@ void main() {
       expect(state.reminderInterval, 90);
 
       // Decrease to bounds (30)
-      for (int i = 0; i < 10; i++) state.decrementInterval();
+      for (int i = 0; i < 10; i++) {
+        state.decrementInterval();
+      }
       expect(state.reminderInterval, 30);
       state.decrementInterval(); // should remain at 30
       expect(state.reminderInterval, 30);
 
       // Increase to bounds (240)
-      for (int i = 0; i < 20; i++) state.incrementInterval();
+      for (int i = 0; i < 20; i++) {
+        state.incrementInterval();
+      }
       expect(state.reminderInterval, 240);
       state.incrementInterval(); // should remain at 240
       expect(state.reminderInterval, 240);
@@ -306,41 +314,47 @@ void main() {
 
     test('totalConsumedToday and weeklyHydrationData calculations', () {
       final state = AppState();
-      
+
       // Let's clear mock entries first to get clean results
       state.entries.clear();
       expect(state.totalConsumedToday, 0.0);
 
       final today = DateTime.now();
-      state.addDrinkEntry(DrinkEntry(
-        id: 'e1',
-        name: 'Water',
-        icon: 'water_drop',
-        oz: 12.0,
-        hydration: 12.0,
-        time: today,
-        source: 'Quick add',
-      ));
-      state.addDrinkEntry(DrinkEntry(
-        id: 'e2',
-        name: 'Coffee',
-        icon: 'local_cafe',
-        oz: 8.0,
-        hydration: 6.4,
-        time: today,
-        source: 'Quick add',
-      ));
-      
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 'e1',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 12.0,
+          hydration: 12.0,
+          time: today,
+          source: 'Quick add',
+        ),
+      );
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 'e2',
+          name: 'Coffee',
+          icon: 'local_cafe',
+          oz: 8.0,
+          hydration: 6.4,
+          time: today,
+          source: 'Quick add',
+        ),
+      );
+
       // Add an entry with yesterday's time to ensure it is not counted today
-      state.addDrinkEntry(DrinkEntry(
-        id: 'e3',
-        name: 'Water',
-        icon: 'water_drop',
-        oz: 16.0,
-        hydration: 16.0,
-        time: today.subtract(const Duration(days: 1)),
-        source: 'Quick add',
-      ));
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 'e3',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 16.0,
+          hydration: 16.0,
+          time: today.subtract(const Duration(days: 1)),
+          source: 'Quick add',
+        ),
+      );
 
       expect(state.totalConsumedToday, 18.4);
       expect(state.weeklyHydrationData.last, 18.4);
