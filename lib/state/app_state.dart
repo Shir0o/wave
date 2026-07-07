@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -291,12 +292,22 @@ class AppState extends ChangeNotifier {
     try {
       if (entry.name.toLowerCase() == 'coffee') {
         final double caffeineMg = entry.oz * 12.5;
-        await Health().writeHealthData(
-          value: caffeineMg,
-          type: HealthDataType.DIETARY_CAFFEINE,
-          startTime: entry.time,
-          endTime: entry.time,
-        );
+        if (Platform.isAndroid) {
+          await Health().writeMeal(
+            mealType: MealType.SNACK,
+            startTime: entry.time,
+            endTime: entry.time,
+            name: 'Coffee',
+            caffeine: caffeineMg,
+          );
+        } else {
+          await Health().writeHealthData(
+            value: caffeineMg,
+            type: HealthDataType.DIETARY_CAFFEINE,
+            startTime: entry.time,
+            endTime: entry.time,
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error writing nutrition to Health Connect: $e');
@@ -449,6 +460,9 @@ class AppState extends ChangeNotifier {
       case 1: // Write hydration
         return [HealthDataType.WATER];
       case 2: // Nutrition
+        if (Platform.isAndroid) {
+          return [HealthDataType.NUTRITION];
+        }
         return [
           HealthDataType.DIETARY_CAFFEINE,
           HealthDataType.DIETARY_ENERGY_CONSUMED,
@@ -469,6 +483,9 @@ class AppState extends ChangeNotifier {
       case 1:
         return [HealthDataAccess.WRITE];
       case 2:
+        if (Platform.isAndroid) {
+          return [HealthDataAccess.READ_WRITE];
+        }
         return [HealthDataAccess.READ_WRITE, HealthDataAccess.READ_WRITE];
       case 3:
         return [HealthDataAccess.READ, HealthDataAccess.READ];

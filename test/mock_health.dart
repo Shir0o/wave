@@ -72,6 +72,7 @@ void mockPlatformChannels() {
           case 'getData':
             return [];
           case 'writeData':
+          case 'writeMeal':
             return true;
           case 'getTotalStepsInInterval':
             return 0;
