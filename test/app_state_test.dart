@@ -24,7 +24,7 @@ void main() {
         expect(state.currentScreen, 'home');
         expect(state.goalOz, 100.0);
         expect(state.isDarkTheme, false);
-        expect(state.entries.length, 3); // mock default entries
+        expect(state.entries.length, 7); // mock default entries
         expect(state.adaptiveReminders, true);
         expect(state.reminderInterval, 90);
         expect(state.healthConnectConnected, true);
@@ -398,5 +398,131 @@ void main() {
         expect(state.entries.any((e) => e.id == 'coffee-test-id'), true);
       },
     );
+
+    test('setWakeTime and setSleepTime update time settings and persist', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      state.setWakeTime('6:30 AM');
+      state.setSleepTime('11:00 PM');
+
+      expect(state.wakeTime, '6:30 AM');
+      expect(state.sleepTime, '11:00 PM');
+
+      await Future.delayed(const Duration(milliseconds: 50));
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('wakeTime'), '6:30 AM');
+      expect(prefs.getString('sleepTime'), '11:00 PM');
+    });
+
+    test('currentStreak calculates consecutive days meeting goal', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 150));
+      state.entries.clear();
+
+      final now = DateTime.now();
+
+      // Today: met goal (100 oz)
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 's1',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 100.0,
+          hydration: 100.0,
+          time: now,
+          source: 'Test',
+        ),
+      );
+
+      // Yesterday: met goal (100 oz)
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 's2',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 100.0,
+          hydration: 100.0,
+          time: now.subtract(const Duration(days: 1)),
+          source: 'Test',
+        ),
+      );
+
+      // 2 days ago: met goal (100 oz)
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 's3',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 100.0,
+          hydration: 100.0,
+          time: now.subtract(const Duration(days: 2)),
+          source: 'Test',
+        ),
+      );
+
+      // 3 days ago: missed goal (30 oz) -> breaks streak
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 's4',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 30.0,
+          hydration: 30.0,
+          time: now.subtract(const Duration(days: 3)),
+          source: 'Test',
+        ),
+      );
+
+      expect(state.currentStreak, 3);
+    });
+
+    test('weeklyHydrationData sums entries for each of the last 7 calendar days', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+      state.entries.clear();
+
+      final now = DateTime.now();
+      // Add entry 3 days ago
+      state.addDrinkEntry(
+        DrinkEntry(
+          id: 'w1',
+          name: 'Water',
+          icon: 'water_drop',
+          oz: 50.0,
+          hydration: 50.0,
+          time: now.subtract(const Duration(days: 3)),
+          source: 'Test',
+        ),
+      );
+
+      final weeklyData = state.weeklyHydrationData;
+      expect(weeklyData.length, 7);
+      // Index 3 (3 days ago from today, which is index 6) should be 50.0
+      expect(weeklyData[3], 50.0);
+    });
+
+    test('hydrationInsight returns dynamic recommendations', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+      state.entries.clear();
+
+      expect(state.hydrationInsight, isNotEmpty);
+    });
+
+    test('otherApps list initialization and toggleOtherApp', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      expect(state.otherApps.length, 3);
+      expect(state.otherApps[0]['name'], 'Google Fit');
+
+      final initialStatus = state.otherApps[1]['connected'];
+      state.toggleOtherApp(1); // toggle Samsung Health
+
+      expect(state.otherApps[1]['connected'], !initialStatus);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('otherApps'), isNotNull);
+    });
   });
 }

@@ -22,12 +22,6 @@ class SyncScreen extends StatelessWidget {
         ? 'Connected & syncing'
         : 'Not connected';
 
-    final otherApps = [
-      {'name': 'Google Fit', 'status': 'Connected', 'color': theme.accent2},
-      {'name': 'Samsung Health', 'status': 'Connect', 'color': theme.accent},
-      {'name': 'Fitbit', 'status': 'Connect', 'color': theme.accent},
-    ];
-
     return Scaffold(
       backgroundColor: theme.bg,
       body: SafeArea(
@@ -255,15 +249,15 @@ class SyncScreen extends StatelessWidget {
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: otherApps.length,
+                itemCount: state.otherApps.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
-                  final app = otherApps[index];
+                  final app = state.otherApps[index];
+                  final bool isConnected = app['connected'] == true;
+                  final statusText = isConnected ? 'Connected' : 'Connect';
+                  final statusColor = isConnected ? theme.accent2 : theme.accent;
+
                   return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
                     decoration: BoxDecoration(
                       color: theme.surface,
                       borderRadius: BorderRadius.circular(18),
@@ -275,26 +269,39 @@ class SyncScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          app['name'] as String,
-                          style: GoogleFonts.fredoka(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: theme.text,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _showOtherAppDialog(context, state, theme, index),
+                        borderRadius: BorderRadius.circular(18),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                app['name'] as String,
+                                style: GoogleFonts.fredoka(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.text,
+                                ),
+                              ),
+                              Text(
+                                statusText,
+                                style: GoogleFonts.fredoka(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: statusColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          app['status'] as String,
-                          style: GoogleFonts.fredoka(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: app['color'] as Color,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   );
                 },
@@ -329,6 +336,65 @@ class SyncScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showOtherAppDialog(
+    BuildContext context,
+    AppState state,
+    AppThemeColors theme,
+    int index,
+  ) {
+    final app = state.otherApps[index];
+    final bool isConnected = app['connected'] == true;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: theme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Text(
+            app['name'] as String,
+            style: GoogleFonts.fredoka(
+              fontWeight: FontWeight.w600,
+              color: theme.text,
+            ),
+          ),
+          content: Text(
+            isConnected
+                ? 'Disconnect ${app['name']} from Wave?'
+                : 'Connect ${app['name']} to sync your hydration data automatically.',
+            style: GoogleFonts.fredoka(color: theme.text2, fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.fredoka(color: theme.text3),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                state.toggleOtherApp(index);
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.accent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text(
+                isConnected ? 'Disconnect' : 'Connect',
+                style: GoogleFonts.fredoka(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

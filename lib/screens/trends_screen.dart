@@ -94,7 +94,7 @@ class TrendsScreen extends StatelessWidget {
                             textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
-                                '4', // mock streak
+                                '${state.currentStreak}',
                                 style: GoogleFonts.fredoka(
                                   fontSize: 34,
                                   fontWeight: FontWeight.w600,
@@ -365,7 +365,7 @@ class TrendsScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'You ride a strong morning wave, then dip after 2 PM. Adaptive reminders now surf you through the afternoon.',
+                        state.hydrationInsight,
                         style: GoogleFonts.fredoka(
                           fontSize: 13,
                           color: theme.text2,

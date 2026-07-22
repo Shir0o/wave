@@ -130,36 +130,43 @@ class RemindersScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Active hours
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+                    InkWell(
+                      onTap: () => _showActiveHoursPicker(context, state, theme),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(
-                              Icons.bedtime_rounded,
-                              color: theme.accent,
-                              size: 20,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.bedtime_rounded,
+                                  color: theme.accent,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Active hours',
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: theme.text,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 10),
                             Text(
-                              'Active hours',
+                              '${state.wakeTime} – ${state.sleepTime}',
                               style: GoogleFonts.fredoka(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 color: theme.text,
                               ),
                             ),
                           ],
                         ),
-                        Text(
-                          '${state.wakeTime} – ${state.sleepTime}',
-                          style: GoogleFonts.fredoka(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: theme.text,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                     Divider(color: theme.divider, height: 30),
                     // Interval selection
@@ -301,6 +308,91 @@ class RemindersScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showActiveHoursPicker(
+    BuildContext context,
+    AppState state,
+    AppThemeColors theme,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: theme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Text(
+            'Active Hours',
+            style: GoogleFonts.fredoka(
+              fontWeight: FontWeight.w600,
+              color: theme.text,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  'Wake Time',
+                  style: GoogleFonts.fredoka(color: theme.text),
+                ),
+                trailing: Text(
+                  state.wakeTime,
+                  style: GoogleFonts.fredoka(
+                    color: theme.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () async {
+                  final TimeOfDay? picked = await showTimePicker(
+                    context: context,
+                    initialTime: const TimeOfDay(hour: 7, minute: 0),
+                  );
+                  if (picked != null && context.mounted) {
+                    final formatted = picked.format(context);
+                    state.setWakeTime(formatted);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(
+                  'Sleep Time',
+                  style: GoogleFonts.fredoka(color: theme.text),
+                ),
+                trailing: Text(
+                  state.sleepTime,
+                  style: GoogleFonts.fredoka(
+                    color: theme.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () async {
+                  final TimeOfDay? picked = await showTimePicker(
+                    context: context,
+                    initialTime: const TimeOfDay(hour: 22, minute: 30),
+                  );
+                  if (picked != null && context.mounted) {
+                    final formatted = picked.format(context);
+                    state.setSleepTime(formatted);
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Done',
+                style: GoogleFonts.fredoka(color: theme.accent),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

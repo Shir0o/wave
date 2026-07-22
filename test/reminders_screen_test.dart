@@ -92,5 +92,26 @@ void main() {
 
       expect(find.text('Next splash at None'), findsOneWidget);
     });
+
+    testWidgets('Tapping Active hours opens time picker dialog', (
+      WidgetTester tester,
+    ) async {
+      final state = AppState();
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AppState>.value(
+          value: state,
+          child: const MaterialApp(home: RemindersScreen()),
+        ),
+      );
+
+      final activeHoursFinder = find.text('Active hours');
+      expect(activeHoursFinder, findsOneWidget);
+      await tester.tap(activeHoursFinder);
+      await tester.pumpAndSettle();
+
+      // Check if time picker or active hours dialog opened
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
   });
 }
