@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added dynamic 7-day intake calculation for weekly hydration chart and personalized intake insights.
 - Added interactive connection dialogs and state management for Google Fit, Samsung Health, and Fitbit in `SyncScreen`.
 - Added unit and widget test suite covering active hours, dynamic streak calculation, weekly hydration data, and third-party app toggling.
+- Added versioned GitHub main branch protection ruleset JSON template (`.github/rulesets/main-branch-protection.json`) enforcing PR review approvals, status check completion, linear history, and admin bypass.
 
 ### Fixed
 - Fixed race condition between `_loadFromPrefs()` and `_initHealth()` in `AppState` constructor.
