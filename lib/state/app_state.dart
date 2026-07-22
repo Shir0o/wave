@@ -27,9 +27,14 @@ class AppState extends ChangeNotifier {
     {'time': '7:30 PM', 'enabled': true},
   ];
 
-  // Health Connect settings
+  // Health Connect & Other Apps settings
   bool _healthConnectConnected = true;
   String _lastSyncStr = '2 min ago';
+  List<Map<String, dynamic>> _otherApps = [
+    {'name': 'Google Fit', 'connected': true, 'status': 'Connected'},
+    {'name': 'Samsung Health', 'connected': false, 'status': 'Connect'},
+    {'name': 'Fitbit', 'connected': false, 'status': 'Connect'},
+  ];
   List<Map<String, dynamic>> _permissions = [
     {
       'label': 'Read hydration',
@@ -101,6 +106,7 @@ class AppState extends ChangeNotifier {
   List<Map<String, dynamic>> get reminders => _reminders;
   bool get healthConnectConnected => _healthConnectConnected;
   String get lastSyncStr => _lastSyncStr;
+  List<Map<String, dynamic>> get otherApps => _otherApps;
   List<Map<String, dynamic>> get permissions => _permissions;
   String get aiText => _aiText;
   HydrationParseResult? get aiResult => _aiResult;
@@ -111,8 +117,9 @@ class AppState extends ChangeNotifier {
 
   // Constructor loads persisted settings
   AppState() {
-    _loadFromPrefs();
-    _initHealth();
+    _loadFromPrefs().then((_) {
+      _initHealth();
+    });
   }
 
   void _initHealth() {
@@ -129,10 +136,18 @@ class AppState extends ChangeNotifier {
       _goalOz = prefs.getDouble('goalOz') ?? 100.0;
       _isDarkTheme = prefs.getBool('isDarkTheme') ?? false;
       _adaptiveReminders = prefs.getBool('adaptiveReminders') ?? true;
+      _wakeTime = prefs.getString('wakeTime') ?? '7:00 AM';
+      _sleepTime = prefs.getString('sleepTime') ?? '10:30 PM';
       _reminderInterval = prefs.getInt('reminderInterval') ?? 90;
       _healthConnectConnected = prefs.getBool('healthConnectConnected') ?? true;
       _syncedSteps = prefs.getInt('syncedSteps') ?? 0;
       _syncedWeightLbs = prefs.getDouble('syncedWeightLbs') ?? 0.0;
+
+      final otherAppsJson = prefs.getString('otherApps');
+      if (otherAppsJson != null) {
+        final List<dynamic> decoded = jsonDecode(otherAppsJson);
+        _otherApps = decoded.map((o) => Map<String, dynamic>.from(o)).toList();
+      }
 
       // Load entries
       final entriesJson = prefs.getString('entries');
@@ -143,6 +158,42 @@ class AppState extends ChangeNotifier {
         // Mock default entries for prototype if empty
         final today = DateTime.now();
         _entries = [
+          DrinkEntry(
+            id: 'm1',
+            name: 'Water',
+            icon: 'water_drop',
+            oz: 100.0,
+            hydration: 100.0,
+            time: today.subtract(const Duration(days: 4)),
+            source: 'Quick add',
+          ),
+          DrinkEntry(
+            id: 'm2',
+            name: 'Water',
+            icon: 'water_drop',
+            oz: 100.0,
+            hydration: 100.0,
+            time: today.subtract(const Duration(days: 3)),
+            source: 'Quick add',
+          ),
+          DrinkEntry(
+            id: 'm3',
+            name: 'Water',
+            icon: 'water_drop',
+            oz: 100.0,
+            hydration: 100.0,
+            time: today.subtract(const Duration(days: 2)),
+            source: 'Quick add',
+          ),
+          DrinkEntry(
+            id: 'm4',
+            name: 'Water',
+            icon: 'water_drop',
+            oz: 100.0,
+            hydration: 100.0,
+            time: today.subtract(const Duration(days: 1)),
+            source: 'Quick add',
+          ),
           DrinkEntry(
             id: '1',
             name: 'Water',
@@ -201,10 +252,13 @@ class AppState extends ChangeNotifier {
       await prefs.setDouble('goalOz', _goalOz);
       await prefs.setBool('isDarkTheme', _isDarkTheme);
       await prefs.setBool('adaptiveReminders', _adaptiveReminders);
+      await prefs.setString('wakeTime', _wakeTime);
+      await prefs.setString('sleepTime', _sleepTime);
       await prefs.setInt('reminderInterval', _reminderInterval);
       await prefs.setBool('healthConnectConnected', _healthConnectConnected);
       await prefs.setInt('syncedSteps', _syncedSteps);
       await prefs.setDouble('syncedWeightLbs', _syncedWeightLbs);
+      await prefs.setString('otherApps', jsonEncode(_otherApps));
 
       final entriesJson = jsonEncode(_entries.map((e) => e.toJson()).toList());
       await prefs.setString('entries', entriesJson);
@@ -217,6 +271,28 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error saving preferences: $e');
     }
+  }
+
+  // Active hours setters
+  void setWakeTime(String time) {
+    _wakeTime = time;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setSleepTime(String time) {
+    _sleepTime = time;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  // Other Apps toggle
+  void toggleOtherApp(int index) {
+    final bool curr = _otherApps[index]['connected'] == true;
+    _otherApps[index]['connected'] = !curr;
+    _otherApps[index]['status'] = !curr ? 'Connected' : 'Connect';
+    _saveToPrefs();
+    notifyListeners();
   }
 
   // Navigation
@@ -706,9 +782,78 @@ class AppState extends ChangeNotifier {
         .fold(0.0, (sum, e) => sum + e.hydration);
   }
 
+  int get currentStreak {
+    final now = DateTime.now();
+    final todayDate = DateTime(now.year, now.month, now.day);
+    int streak = 0;
+    for (int i = 0; i < 365; i++) {
+      final targetDate = todayDate.subtract(Duration(days: i));
+      final dayTotal = _entries
+          .where(
+            (e) =>
+                e.time.year == targetDate.year &&
+                e.time.month == targetDate.month &&
+                e.time.day == targetDate.day,
+          )
+          .fold(0.0, (sum, e) => sum + e.hydration);
+
+      if (dayTotal >= goalOz) {
+        streak++;
+      } else {
+        if (i == 0) continue;
+        break;
+      }
+    }
+    return streak;
+  }
+
   List<double> get weeklyHydrationData {
-    // Return standard week logs + today's logs
-    // Design template historical values: Mon: 82, Tue: 64, Wed: 98, Thu: 58, Fri: 100, Sat: 70
-    return [82.0, 64.0, 98.0, 58.0, 100.0, 70.0, totalConsumedToday];
+    final now = DateTime.now();
+    final todayDate = DateTime(now.year, now.month, now.day);
+    List<double> result = [];
+    for (int i = 6; i >= 0; i--) {
+      final targetDate = todayDate.subtract(Duration(days: i));
+      final dayTotal = _entries
+          .where(
+            (e) =>
+                e.time.year == targetDate.year &&
+                e.time.month == targetDate.month &&
+                e.time.day == targetDate.day,
+          )
+          .fold(0.0, (sum, e) => sum + e.hydration);
+      result.add(dayTotal);
+    }
+    return result;
+  }
+
+  String get hydrationInsight {
+    final today = DateTime.now();
+    final todayEntries = _entries
+        .where(
+          (e) =>
+              e.time.year == today.year &&
+              e.time.month == today.month &&
+              e.time.day == today.day,
+        )
+        .toList();
+    if (todayEntries.isEmpty) {
+      return 'Start your day with a fresh glass of water to kickstart hydration!';
+    }
+    double morningTotal = 0.0;
+    double afternoonTotal = 0.0;
+    for (var e in todayEntries) {
+      if (e.time.hour < 12) {
+        morningTotal += e.hydration;
+      } else {
+        afternoonTotal += e.hydration;
+      }
+    }
+    if (morningTotal > afternoonTotal) {
+      return 'Great morning momentum! Keep steady intake through the afternoon wave.';
+    } else if (afternoonTotal > morningTotal) {
+      return 'Strong afternoon recovery! Try starting with a larger morning glass tomorrow.';
+    } else {
+      return 'Balanced hydration flow! You ride a steady wave across your day.';
+    }
   }
 }

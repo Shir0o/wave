@@ -80,5 +80,28 @@ void main() {
         expect(state.currentScreen, 'onboard');
       },
     );
+
+    testWidgets('Tapping Other Apps items toggles connection or opens dialog', (
+      WidgetTester tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final state = AppState();
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AppState>.value(
+          value: state,
+          child: const MaterialApp(home: SyncScreen()),
+        ),
+      );
+
+      final samsungHealthFinder = find.text('Samsung Health');
+      expect(samsungHealthFinder, findsOneWidget);
+      await tester.tap(samsungHealthFinder);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
   });
 }
