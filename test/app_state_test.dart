@@ -399,21 +399,24 @@ void main() {
       },
     );
 
-    test('setWakeTime and setSleepTime update time settings and persist', () async {
-      final state = AppState();
-      await Future.delayed(const Duration(milliseconds: 300));
+    test(
+      'setWakeTime and setSleepTime update time settings and persist',
+      () async {
+        final state = AppState();
+        await Future.delayed(const Duration(milliseconds: 300));
 
-      state.setWakeTime('6:30 AM');
-      state.setSleepTime('11:00 PM');
+        state.setWakeTime('6:30 AM');
+        state.setSleepTime('11:00 PM');
 
-      expect(state.wakeTime, '6:30 AM');
-      expect(state.sleepTime, '11:00 PM');
+        expect(state.wakeTime, '6:30 AM');
+        expect(state.sleepTime, '11:00 PM');
 
-      await Future.delayed(const Duration(milliseconds: 50));
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString('wakeTime'), '6:30 AM');
-      expect(prefs.getString('sleepTime'), '11:00 PM');
-    });
+        await Future.delayed(const Duration(milliseconds: 50));
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getString('wakeTime'), '6:30 AM');
+        expect(prefs.getString('sleepTime'), '11:00 PM');
+      },
+    );
 
     test('currentStreak calculates consecutive days meeting goal', () async {
       final state = AppState();
@@ -477,30 +480,33 @@ void main() {
       expect(state.currentStreak, 3);
     });
 
-    test('weeklyHydrationData sums entries for each of the last 7 calendar days', () async {
-      final state = AppState();
-      await Future.delayed(const Duration(milliseconds: 50));
-      state.entries.clear();
+    test(
+      'weeklyHydrationData sums entries for each of the last 7 calendar days',
+      () async {
+        final state = AppState();
+        await Future.delayed(const Duration(milliseconds: 50));
+        state.entries.clear();
 
-      final now = DateTime.now();
-      // Add entry 3 days ago
-      state.addDrinkEntry(
-        DrinkEntry(
-          id: 'w1',
-          name: 'Water',
-          icon: 'water_drop',
-          oz: 50.0,
-          hydration: 50.0,
-          time: now.subtract(const Duration(days: 3)),
-          source: 'Test',
-        ),
-      );
+        final now = DateTime.now();
+        // Add entry 3 days ago
+        state.addDrinkEntry(
+          DrinkEntry(
+            id: 'w1',
+            name: 'Water',
+            icon: 'water_drop',
+            oz: 50.0,
+            hydration: 50.0,
+            time: now.subtract(const Duration(days: 3)),
+            source: 'Test',
+          ),
+        );
 
-      final weeklyData = state.weeklyHydrationData;
-      expect(weeklyData.length, 7);
-      // Index 3 (3 days ago from today, which is index 6) should be 50.0
-      expect(weeklyData[3], 50.0);
-    });
+        final weeklyData = state.weeklyHydrationData;
+        expect(weeklyData.length, 7);
+        // Index 3 (3 days ago from today, which is index 6) should be 50.0
+        expect(weeklyData[3], 50.0);
+      },
+    );
 
     test('hydrationInsight returns dynamic recommendations', () async {
       final state = AppState();

@@ -131,7 +131,8 @@ class RemindersScreen extends StatelessWidget {
                   children: [
                     // Active hours
                     InkWell(
-                      onTap: () => _showActiveHoursPicker(context, state, theme),
+                      onTap: () =>
+                          _showActiveHoursPicker(context, state, theme),
                       borderRadius: BorderRadius.circular(12),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),

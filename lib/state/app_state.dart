@@ -789,10 +789,12 @@ class AppState extends ChangeNotifier {
     for (int i = 0; i < 365; i++) {
       final targetDate = todayDate.subtract(Duration(days: i));
       final dayTotal = _entries
-          .where((e) =>
-              e.time.year == targetDate.year &&
-              e.time.month == targetDate.month &&
-              e.time.day == targetDate.day)
+          .where(
+            (e) =>
+                e.time.year == targetDate.year &&
+                e.time.month == targetDate.month &&
+                e.time.day == targetDate.day,
+          )
           .fold(0.0, (sum, e) => sum + e.hydration);
 
       if (dayTotal >= goalOz) {
@@ -812,10 +814,12 @@ class AppState extends ChangeNotifier {
     for (int i = 6; i >= 0; i--) {
       final targetDate = todayDate.subtract(Duration(days: i));
       final dayTotal = _entries
-          .where((e) =>
-              e.time.year == targetDate.year &&
-              e.time.month == targetDate.month &&
-              e.time.day == targetDate.day)
+          .where(
+            (e) =>
+                e.time.year == targetDate.year &&
+                e.time.month == targetDate.month &&
+                e.time.day == targetDate.day,
+          )
           .fold(0.0, (sum, e) => sum + e.hydration);
       result.add(dayTotal);
     }
@@ -824,10 +828,14 @@ class AppState extends ChangeNotifier {
 
   String get hydrationInsight {
     final today = DateTime.now();
-    final todayEntries = _entries.where((e) =>
-        e.time.year == today.year &&
-        e.time.month == today.month &&
-        e.time.day == today.day).toList();
+    final todayEntries = _entries
+        .where(
+          (e) =>
+              e.time.year == today.year &&
+              e.time.month == today.month &&
+              e.time.day == today.day,
+        )
+        .toList();
     if (todayEntries.isEmpty) {
       return 'Start your day with a fresh glass of water to kickstart hydration!';
     }

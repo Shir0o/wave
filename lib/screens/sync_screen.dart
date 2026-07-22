@@ -255,7 +255,9 @@ class SyncScreen extends StatelessWidget {
                   final app = state.otherApps[index];
                   final bool isConnected = app['connected'] == true;
                   final statusText = isConnected ? 'Connected' : 'Connect';
-                  final statusColor = isConnected ? theme.accent2 : theme.accent;
+                  final statusColor = isConnected
+                      ? theme.accent2
+                      : theme.accent;
 
                   return Container(
                     decoration: BoxDecoration(
@@ -272,7 +274,8 @@ class SyncScreen extends StatelessWidget {
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: () => _showOtherAppDialog(context, state, theme, index),
+                        onTap: () =>
+                            _showOtherAppDialog(context, state, theme, index),
                         borderRadius: BorderRadius.circular(18),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
