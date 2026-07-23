@@ -181,7 +181,9 @@ class HomeScreen extends StatelessWidget {
                               // Unit Setting Toggle
                               TextButton(
                                 onPressed: () {
-                                  final nextUnit = state.unit == 'oz' ? 'ml' : 'oz';
+                                  final nextUnit = state.unit == 'oz'
+                                      ? 'ml'
+                                      : 'oz';
                                   state.setUnit(nextUnit);
                                   state.showToast('Unit changed to $nextUnit');
                                 },
@@ -190,7 +192,9 @@ class HomeScreen extends StatelessWidget {
                                   shadowColor: theme.shadow,
                                   elevation: 4,
                                   minimumSize: const Size(44, 44),
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(22),
                                   ),
