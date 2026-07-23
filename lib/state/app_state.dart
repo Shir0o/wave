@@ -10,6 +10,7 @@ class AppState extends ChangeNotifier {
   String _currentScreen = 'home';
   double _goalOz = 100.0;
   bool _isDarkTheme = false;
+  String _unit = 'oz';
   List<DrinkEntry> _entries = [];
 
   // Reminder settings
@@ -98,6 +99,7 @@ class AppState extends ChangeNotifier {
   int get syncedSteps => _syncedSteps;
   double get syncedWeightLbs => _syncedWeightLbs;
   bool get isDarkTheme => _isDarkTheme;
+  String get unit => _unit;
   List<DrinkEntry> get entries => _entries;
   bool get adaptiveReminders => _adaptiveReminders;
   String get wakeTime => _wakeTime;
@@ -135,6 +137,7 @@ class AppState extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _goalOz = prefs.getDouble('goalOz') ?? 100.0;
       _isDarkTheme = prefs.getBool('isDarkTheme') ?? false;
+      _unit = prefs.getString('unit') ?? 'oz';
       _adaptiveReminders = prefs.getBool('adaptiveReminders') ?? true;
       _wakeTime = prefs.getString('wakeTime') ?? '7:00 AM';
       _sleepTime = prefs.getString('sleepTime') ?? '10:30 PM';
@@ -251,6 +254,7 @@ class AppState extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('goalOz', _goalOz);
       await prefs.setBool('isDarkTheme', _isDarkTheme);
+      await prefs.setString('unit', _unit);
       await prefs.setBool('adaptiveReminders', _adaptiveReminders);
       await prefs.setString('wakeTime', _wakeTime);
       await prefs.setString('sleepTime', _sleepTime);
@@ -322,6 +326,15 @@ class AppState extends ChangeNotifier {
     _isDarkTheme = !_isDarkTheme;
     _saveToPrefs();
     notifyListeners();
+  }
+
+  // Set Unit Preference
+  void setUnit(String unit) {
+    if (_unit != unit) {
+      _unit = unit;
+      _saveToPrefs();
+      notifyListeners();
+    }
   }
 
   // Add Log Entry

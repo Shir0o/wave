@@ -178,6 +178,37 @@ class HomeScreen extends StatelessWidget {
                           ),
                           Row(
                             children: [
+                              // Unit Setting Toggle
+                              TextButton(
+                                onPressed: () {
+                                  final nextUnit = state.unit == 'oz'
+                                      ? 'ml'
+                                      : 'oz';
+                                  state.setUnit(nextUnit);
+                                  state.showToast('Unit changed to $nextUnit');
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: theme.surface,
+                                  shadowColor: theme.shadow,
+                                  elevation: 4,
+                                  minimumSize: const Size(44, 44),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                ),
+                                child: Text(
+                                  state.unit.toUpperCase(),
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.accent,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 9),
                               // Theme Toggle
                               IconButton(
                                 onPressed: () => state.toggleTheme(),

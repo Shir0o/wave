@@ -24,6 +24,7 @@ void main() {
         expect(state.currentScreen, 'home');
         expect(state.goalOz, 100.0);
         expect(state.isDarkTheme, false);
+        expect(state.unit, 'oz');
         expect(state.entries.length, 7); // mock default entries
         expect(state.adaptiveReminders, true);
         expect(state.reminderInterval, 90);
@@ -43,6 +44,7 @@ void main() {
       SharedPreferences.setMockInitialValues({
         'goalOz': 120.0,
         'isDarkTheme': true,
+        'unit': 'ml',
         'adaptiveReminders': false,
         'reminderInterval': 60,
         'healthConnectConnected': false,
@@ -57,6 +59,7 @@ void main() {
 
       expect(state.goalOz, 120.0);
       expect(state.isDarkTheme, true);
+      expect(state.unit, 'ml');
       expect(state.adaptiveReminders, false);
       expect(state.reminderInterval, 60);
       expect(state.healthConnectConnected, false);
@@ -100,6 +103,19 @@ void main() {
 
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getBool('isDarkTheme'), true);
+    });
+
+    test('setUnit updates unit setting and saves to prefs', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      expect(state.unit, 'oz');
+      state.setUnit('ml');
+      await Future.delayed(const Duration(milliseconds: 50));
+      expect(state.unit, 'ml');
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('unit'), 'ml');
     });
 
     test('addDrinkEntry adds entry and shows toast', () {
