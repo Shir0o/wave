@@ -124,10 +124,13 @@ class AppState extends ChangeNotifier {
     });
   }
 
-  void _initHealth() {
-    Health().configure();
+  void _initHealth() async {
+    await Health().configure();
     if (_healthConnectConnected) {
-      syncNow(silent: true);
+      bool available = await Health().isHealthConnectAvailable();
+      if (available) {
+        syncNow(silent: true);
+      }
     }
   }
 
@@ -587,6 +590,14 @@ class AppState extends ChangeNotifier {
 
   Future<bool> _requestHealthPermissions() async {
     try {
+      if (Platform.isAndroid) {
+        bool available = await Health().isHealthConnectAvailable();
+        if (!available) {
+          debugPrint('Health Connect is not available on this device');
+          return false;
+        }
+      }
+
       final List<HealthDataType> types = [];
       final List<HealthDataAccess> accessList = [];
 
@@ -609,6 +620,12 @@ class AppState extends ChangeNotifier {
       }
 
       if (types.isEmpty) return true;
+
+      bool? hasPerms = await Health().hasPermissions(
+        types,
+        permissions: accessList,
+      );
+      if (hasPerms == true) return true;
 
       bool granted = await Health().requestAuthorization(
         types,
@@ -644,6 +661,15 @@ class AppState extends ChangeNotifier {
     if (!_healthConnectConnected) return;
 
     try {
+      if (Platform.isAndroid) {
+        bool available = await Health().isHealthConnectAvailable();
+        if (!available) {
+          if (!silent) {
+            showToast('Health Connect unavailable');
+          }
+          return;
+        }
+      }
       final now = DateTime.now();
       final midnight = DateTime(now.year, now.month, now.day);
 
@@ -657,8 +683,13 @@ class AppState extends ChangeNotifier {
             );
         for (var point in waterPoints) {
           if (point.value is NumericHealthValue) {
-            if (point.sourceId == 'com.twang.wave.wave') continue;
-            if (_entries.any((e) => e.id == point.uuid)) continue;
+            if (point.sourceId == 'com.twang.wave.wave' ||
+                point.sourceName == 'com.twang.wave.wave') {
+              continue;
+            }
+            if (_entries.any((e) => e.id == point.uuid)) {
+              continue;
+            }
 
             final double liters = (point.value as NumericHealthValue)
                 .numericValue
@@ -682,19 +713,24 @@ class AppState extends ChangeNotifier {
 
       // 2. Sync Steps / Activity
       if (_permissions[3]['enabled'] == true) {
-        List<HealthDataPoint> stepsPoints = await Health()
-            .getHealthDataFromTypes(
-              startTime: midnight,
-              endTime: now,
-              types: [HealthDataType.STEPS],
-            );
-        int steps = 0;
-        for (var point in stepsPoints) {
-          if (point.value is NumericHealthValue) {
-            steps += (point.value as NumericHealthValue).numericValue.round();
+        int? steps = await Health().getTotalStepsInInterval(midnight, now);
+        if (steps != null) {
+          _syncedSteps = steps;
+        } else {
+          List<HealthDataPoint> stepsPoints = await Health()
+              .getHealthDataFromTypes(
+                startTime: midnight,
+                endTime: now,
+                types: [HealthDataType.STEPS],
+              );
+          int count = 0;
+          for (var point in stepsPoints) {
+            if (point.value is NumericHealthValue) {
+              count += (point.value as NumericHealthValue).numericValue.round();
+            }
           }
+          _syncedSteps = count;
         }
-        _syncedSteps = steps;
       }
 
       // 3. Sync Body Weight

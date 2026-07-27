@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed race condition between `_loadFromPrefs()` and `_initHealth()` in `AppState` constructor.
 - Added Android 14+ Health Connect rationale intent filter (`android.intent.action.VIEW_PERMISSION_USAGE`) and package visibility queries in `AndroidManifest.xml`.
+- Added Android Health Connect availability (`isHealthConnectAvailable()`) and permission (`hasPermissions()`) validation in `AppState`, updated self-logging deduplication check to match `sourceId` and `sourceName`, and switched steps sync to aggregated interval queries.
 
 ## [1.0.0] - 2026-07-06
 
