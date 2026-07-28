@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wave/state/app_state.dart';
 import 'package:wave/theme/app_theme.dart';
@@ -214,6 +215,11 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                 ),
               ),
               const SizedBox(height: 16),
+              // Last Session Card (Smart Add)
+              if (state.lastBatchEntries().isNotEmpty) ...[
+                _buildLastSessionCard(context, state, theme),
+                const SizedBox(height: 16),
+              ],
               // Chips Trigger Header
               Text(
                 'TRY SAYING',
@@ -512,6 +518,138 @@ class _SmartLogScreenState extends State<SmartLogScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLastSessionCard(
+    BuildContext context,
+    AppState state,
+    AppThemeColors theme,
+  ) {
+    final lastBatch = state.lastBatchEntries();
+    if (lastBatch.isEmpty) return const SizedBox.shrink();
+
+    final lastTimeStr = DateFormat('h:mm a').format(lastBatch.first.time);
+    final lastTotalOz = lastBatch.fold(0.0, (sum, e) => sum + e.oz).round();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.surface,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadow,
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.history_rounded, color: theme.accent2, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Last session',
+                    style: GoogleFonts.fredoka(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: theme.text,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                lastTimeStr,
+                style: GoogleFonts.fredoka(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: theme.text3,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: lastBatch.map((entry) {
+              return InkWell(
+                onTap: () => state.repeatOne(entry),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.surfaceTint,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        getIconData(entry.icon),
+                        color: theme.accent2,
+                        size: 19,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        entry.name,
+                        style: GoogleFonts.fredoka(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: theme.text,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${entry.oz.round()} oz',
+                        style: GoogleFonts.fredoka(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: theme.text3,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(Icons.add_rounded, color: theme.accent, size: 17),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => state.repeatLast(),
+              icon: const Icon(Icons.replay_rounded, size: 19),
+              label: Text('Add the same again · $lastTotalOz oz'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.surfaceSoft,
+                foregroundColor: theme.accent2,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                textStyle: GoogleFonts.fredoka(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

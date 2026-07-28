@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Added Test-Driven Development (TDD) guidelines to `AGENTS.md` and `CLAUDE.md` under Section 6 ("Testing Policy & Test-Driven Development").
+- Implemented **Smart Add from Previous Sessions** card on `SmartLogScreen` with individual item chips (`repeatOne`) and batch replay button (`repeatLast`) matching `Wave.dc.html`.
+- Added session batch tracking (`batch`, `nextBatch()`, `lastBatchEntries()`) to `DrinkEntry` and `AppState`.
+- Added smooth metric count-up animation (`TweenAnimationBuilder<double>`) for intake volume and percentage on `HomeScreen` synchronized with the 900ms wave fill transition.
 - Wired active hours wake and sleep time picker dialogs in `RemindersScreen`.
 - Added dynamic streak counter calculation in `AppState` and bound to `TrendsScreen`.
 - Added dynamic 7-day intake calculation for weekly hydration chart and personalized intake insights.
