@@ -19,7 +19,6 @@ class HomeScreen extends StatelessWidget {
         : AppThemeColors.light;
 
     final todayConsumed = state.totalConsumedToday;
-    final pct = (todayConsumed / state.goalOz * 100).clamp(0.0, 100.0).round();
     final fillPercentage = (todayConsumed / state.goalOz).clamp(0.0, 1.0);
 
     final now = DateTime.now();
