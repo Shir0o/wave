@@ -546,5 +546,83 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getString('otherApps'), isNotNull);
     });
+
+    test('batch tracking, lastBatchEntries, repeatLast, and repeatOne', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+      state.entries.clear();
+
+      expect(state.lastBatchEntries(), isEmpty);
+
+      final entry1 = DrinkEntry(
+        id: 'b1_1',
+        name: 'Coffee',
+        icon: 'local_cafe',
+        oz: 12.0,
+        hydration: 10.0,
+        time: DateTime.now(),
+        source: 'AI log',
+        batch: 2,
+      );
+      final entry2 = DrinkEntry(
+        id: 'b1_2',
+        name: 'Water',
+        icon: 'water_drop',
+        oz: 8.0,
+        hydration: 8.0,
+        time: DateTime.now(),
+        source: 'AI log',
+        batch: 2,
+      );
+
+      state.addDrinkEntry(entry1);
+      state.addDrinkEntry(entry2);
+
+      expect(state.lastBatchEntries().length, 2);
+      expect(state.lastBatchEntries().first.name, 'Coffee');
+      expect(state.lastBatchEntries().last.name, 'Water');
+
+      // Test repeatOne
+      state.repeatOne(entry1);
+      expect(state.entries.length, 3);
+      expect(state.entries.last.name, 'Coffee');
+      expect(state.entries.last.source, 'Repeat');
+
+      // Test repeatLast
+      final prevCount = state.entries.length;
+      state.repeatLast();
+      // Should add the batch (which was 3, since repeatOne created a new batch 3)
+      expect(state.entries.length, prevCount + 1);
+      expect(state.currentScreen, 'home');
+    });
+
+    test(
+      'onboarding controls adjust goal, toggle connect and finish',
+      () async {
+        final state = AppState();
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final initialGoal = state.onbGoal;
+        state.adjustOnbGoal(10.0);
+        expect(state.onbGoal, initialGoal + 10.0);
+
+        final initialConnect = state.onbConnect;
+        state.toggleOnbConnect();
+        expect(state.onbConnect, !initialConnect);
+
+        state.finishOnboarding();
+        expect(state.goalOz, initialGoal + 10.0);
+        expect(state.currentScreen, 'home');
+      },
+    );
+
+    test('togglePermission flips permission state', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      final initialPerm = state.permissions[0]['enabled'];
+      state.togglePermission(0);
+      expect(state.permissions[0]['enabled'], !initialPerm);
+    });
   });
 }

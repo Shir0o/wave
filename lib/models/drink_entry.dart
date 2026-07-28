@@ -6,6 +6,7 @@ class DrinkEntry {
   final double hydration;
   final DateTime time;
   final String source;
+  final int batch;
 
   DrinkEntry({
     required this.id,
@@ -15,6 +16,7 @@ class DrinkEntry {
     required this.hydration,
     required this.time,
     required this.source,
+    this.batch = 1,
   });
 
   Map<String, dynamic> toJson() => {
@@ -25,6 +27,7 @@ class DrinkEntry {
     'hydration': hydration,
     'time': time.toIso8601String(),
     'source': source,
+    'batch': batch,
   };
 
   factory DrinkEntry.fromJson(Map<String, dynamic> json) => DrinkEntry(
@@ -37,6 +40,7 @@ class DrinkEntry {
     hydration: (json['hydration'] as num).toDouble(),
     time: DateTime.parse(json['time'] as String),
     source: json['source'] as String,
+    batch: (json['batch'] as num?)?.toInt() ?? 1,
   );
 
   DrinkEntry copyWith({
@@ -47,6 +51,7 @@ class DrinkEntry {
     double? hydration,
     DateTime? time,
     String? source,
+    int? batch,
   }) {
     return DrinkEntry(
       id: id ?? this.id,
@@ -56,6 +61,7 @@ class DrinkEntry {
       hydration: hydration ?? this.hydration,
       time: time ?? this.time,
       source: source ?? this.source,
+      batch: batch ?? this.batch,
     );
   }
 }

@@ -19,7 +19,6 @@ class HomeScreen extends StatelessWidget {
         : AppThemeColors.light;
 
     final todayConsumed = state.totalConsumedToday;
-    final pct = (todayConsumed / state.goalOz * 100).clamp(0.0, 100.0).round();
     final fillPercentage = (todayConsumed / state.goalOz).clamp(0.0, 1.0);
 
     final now = DateTime.now();
@@ -62,81 +61,91 @@ class HomeScreen extends StatelessWidget {
                 // Center Percentage Metrics
                 Positioned.fill(
                   child: IgnorePointer(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 40),
-                        Text(
-                          'TODAY',
-                          style: GoogleFonts.fredoka(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: theme.onWave,
-                            letterSpacing: 2,
-                            shadows: [
-                              Shadow(
-                                color: theme.onWaveSh,
-                                offset: const Offset(0, 2),
-                                blurRadius: 12,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0.0, end: todayConsumed),
+                      duration: const Duration(milliseconds: 900),
+                      curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+                      builder: (context, animConsumed, child) {
+                        final animPct = (animConsumed / state.goalOz * 100)
+                            .clamp(0.0, 100.0)
+                            .round();
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
                           children: [
+                            const SizedBox(height: 40),
                             Text(
-                              '$pct',
+                              'TODAY',
                               style: GoogleFonts.fredoka(
-                                fontSize: 82,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: theme.onWave,
-                                height: 1.0,
+                                letterSpacing: 2,
                                 shadows: [
                                   Shadow(
                                     color: theme.onWaveSh,
-                                    offset: const Offset(0, 4),
-                                    blurRadius: 20,
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 12,
                                   ),
                                 ],
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  '$animPct',
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 82,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.onWave,
+                                    height: 1.0,
+                                    shadows: [
+                                      Shadow(
+                                        color: theme.onWaveSh,
+                                        offset: const Offset(0, 4),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  '%',
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.onWave,
+                                    shadows: [
+                                      Shadow(
+                                        color: theme.onWaveSh,
+                                        offset: const Offset(0, 4),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
                             Text(
-                              '%',
+                              '${animConsumed.round()} of ${state.goalOz.round()} fl oz',
                               style: GoogleFonts.fredoka(
-                                fontSize: 36,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
                                 color: theme.onWave,
                                 shadows: [
                                   Shadow(
                                     color: theme.onWaveSh,
-                                    offset: const Offset(0, 4),
-                                    blurRadius: 20,
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 12,
                                   ),
                                 ],
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${todayConsumed.round()} of ${state.goalOz.round()} fl oz',
-                          style: GoogleFonts.fredoka(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            color: theme.onWave,
-                            shadows: [
-                              Shadow(
-                                color: theme.onWaveSh,
-                                offset: const Offset(0, 2),
-                                blurRadius: 12,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),

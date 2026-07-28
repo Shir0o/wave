@@ -340,6 +340,60 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  // Batch tracking helpers
+  int nextBatch() {
+    return _entries.fold(0, (max, e) => e.batch > max ? e.batch : max) + 1;
+  }
+
+  List<DrinkEntry> lastBatchEntries() {
+    if (_entries.isEmpty) return [];
+    int maxBatch = _entries.fold(0, (max, e) => e.batch > max ? e.batch : max);
+    return _entries.where((e) => e.batch == maxBatch).toList();
+  }
+
+  void repeatLast() {
+    final group = lastBatchEntries();
+    if (group.isEmpty) return;
+    final now = DateTime.now();
+    final batch = nextBatch();
+    double totalHydration = 0.0;
+    for (final e in group) {
+      final newEntry = DrinkEntry(
+        id: '${now.microsecondsSinceEpoch}_${e.name}',
+        name: e.name,
+        icon: e.icon,
+        oz: e.oz,
+        hydration: e.hydration,
+        time: now,
+        source: 'Repeat',
+        batch: batch,
+      );
+      _entries.add(newEntry);
+      _postLogToHealthConnect(newEntry);
+      totalHydration += e.hydration;
+    }
+    showToast('Repeated +${totalHydration.round()} oz');
+    _currentScreen = 'home';
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void repeatOne(DrinkEntry entry) {
+    final now = DateTime.now();
+    final batch = nextBatch();
+    final newEntry = DrinkEntry(
+      id: '${now.microsecondsSinceEpoch}_${entry.name}',
+      name: entry.name,
+      icon: entry.icon,
+      oz: entry.oz,
+      hydration: entry.hydration,
+      time: now,
+      source: 'Repeat',
+      batch: batch,
+    );
+    addDrinkEntry(newEntry);
+  }
+
   // Add Log Entry
   void addDrinkEntry(DrinkEntry entry) {
     _entries.add(entry);
@@ -494,6 +548,7 @@ class AppState extends ChangeNotifier {
   void confirmAiLog() {
     if (_aiResult == null || _aiResult!.items.isEmpty) return;
     final now = DateTime.now();
+    final batch = nextBatch();
     for (final parsed in _aiResult!.items) {
       final entry = DrinkEntry(
         id: '${now.microsecondsSinceEpoch}_${parsed.name}',
@@ -503,6 +558,7 @@ class AppState extends ChangeNotifier {
         hydration: parsed.hydration,
         time: now,
         source: 'AI log',
+        batch: batch,
       );
       _entries.add(entry);
       _postLogToHealthConnect(entry);
