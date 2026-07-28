@@ -595,5 +595,34 @@ void main() {
       expect(state.entries.length, prevCount + 1);
       expect(state.currentScreen, 'home');
     });
+
+    test(
+      'onboarding controls adjust goal, toggle connect and finish',
+      () async {
+        final state = AppState();
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final initialGoal = state.onbGoal;
+        state.adjustOnbGoal(10.0);
+        expect(state.onbGoal, initialGoal + 10.0);
+
+        final initialConnect = state.onbConnect;
+        state.toggleOnbConnect();
+        expect(state.onbConnect, !initialConnect);
+
+        state.finishOnboarding();
+        expect(state.goalOz, initialGoal + 10.0);
+        expect(state.currentScreen, 'home');
+      },
+    );
+
+    test('togglePermission flips permission state', () async {
+      final state = AppState();
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      final initialPerm = state.permissions[0]['enabled'];
+      state.togglePermission(0);
+      expect(state.permissions[0]['enabled'], !initialPerm);
+    });
   });
 }
