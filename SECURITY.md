@@ -1,17 +1,18 @@
 # Security Policy
 
-## Supported Versions
-
-Only the latest release version on the `main` branch is actively supported with security updates.
-
 ## Reporting a Vulnerability
 
-If you discover a potential security vulnerability within this project, please report it immediately by opening a secure issue or emailing the maintainers directly at `yilong.twang@gmail.com`. 
+If you discover a security vulnerability in this project, please report it
+responsibly using GitHub's private vulnerability reporting.
 
-Please do **not** report security vulnerabilities via public GitHub issues.
+1. Go to the **Security** tab of this repository.
+2. Click **Report a vulnerability**.
+3. Fill in the details and submit.
 
-### Process
+Your report will be reviewed and you will receive a response within 7 days.
+Please do not open public issues for security vulnerabilities.
 
-1. **Acknowledgment**: We will acknowledge receipt of your vulnerability report within 48 hours.
-2. **Investigation**: We will investigate and verify the report as soon as possible.
-3. **Resolution**: Once verified, we will work on a fix and coordinate a release.
+## Supported Versions
+
+Only the latest release on the default branch is actively supported with
+security updates.
