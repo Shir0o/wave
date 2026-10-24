@@ -38,35 +38,36 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
     });
 
-    testWidgets('WaveContainer enforces minimum 8% resting fill when fillPercentage is 0.0', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              width: 200,
-              height: 200,
-              child: WaveContainer(
-                fillPercentage: 0.0,
-                fillTopColor: Colors.blue,
-                fillBottomColor: Colors.indigo,
-                waveColor1: Colors.cyan,
-                waveColor2: Colors.teal,
+    testWidgets(
+      'WaveContainer enforces minimum 8% resting fill when fillPercentage is 0.0',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                width: 200,
+                height: 200,
+                child: WaveContainer(
+                  fillPercentage: 0.0,
+                  fillTopColor: Colors.blue,
+                  fillBottomColor: Colors.indigo,
+                  waveColor1: Colors.cyan,
+                  waveColor2: Colors.teal,
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      final customPaint = tester.widget<CustomPaint>(
-        find.byWidgetPredicate(
-          (widget) => widget is CustomPaint && widget.painter is WavePainter,
-        ),
-      );
-      final painter = customPaint.painter as WavePainter;
-      expect(painter.fillPercentage, greaterThanOrEqualTo(0.08));
-    });
+        final customPaint = tester.widget<CustomPaint>(
+          find.byWidgetPredicate(
+            (widget) => widget is CustomPaint && widget.painter is WavePainter,
+          ),
+        );
+        final painter = customPaint.painter as WavePainter;
+        expect(painter.fillPercentage, greaterThanOrEqualTo(0.08));
+      },
+    );
 
     testWidgets('WaveContainer didUpdateWidget triggers fill transition', (
       WidgetTester tester,

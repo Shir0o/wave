@@ -59,8 +59,7 @@ class _WaveContainerState extends State<WaveContainer>
     ),
   ];
 
-  double _getEffectiveFill(double fill) =>
-      math.max(0.08, fill.clamp(0.0, 1.0));
+  double _getEffectiveFill(double fill) => math.max(0.08, fill.clamp(0.0, 1.0));
 
   @override
   void initState() {
@@ -83,15 +82,13 @@ class _WaveContainerState extends State<WaveContainer>
       duration: const Duration(milliseconds: 900),
     );
     final initialEffective = _getEffectiveFill(widget.fillPercentage);
-    _fillAnimation = Tween<double>(
-      begin: initialEffective,
-      end: initialEffective,
-    ).animate(
-      CurvedAnimation(
-        parent: _fillController,
-        curve: const Cubic(0.34, 0.02, 0.16, 1.0),
-      ),
-    );
+    _fillAnimation =
+        Tween<double>(begin: initialEffective, end: initialEffective).animate(
+          CurvedAnimation(
+            parent: _fillController,
+            curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+          ),
+        );
 
     // Bubble rising animation (6s loop)
     _bubbleController = AnimationController(
@@ -106,15 +103,13 @@ class _WaveContainerState extends State<WaveContainer>
     final oldEffective = _getEffectiveFill(oldWidget.fillPercentage);
     final newEffective = _getEffectiveFill(widget.fillPercentage);
     if (oldEffective != newEffective) {
-      _fillAnimation = Tween<double>(
-        begin: _fillAnimation.value,
-        end: newEffective,
-      ).animate(
-        CurvedAnimation(
-          parent: _fillController,
-          curve: const Cubic(0.34, 0.02, 0.16, 1.0),
-        ),
-      );
+      _fillAnimation =
+          Tween<double>(begin: _fillAnimation.value, end: newEffective).animate(
+            CurvedAnimation(
+              parent: _fillController,
+              curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+            ),
+          );
       _fillController.forward(from: 0.0);
     }
   }
@@ -200,8 +195,10 @@ class WavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double effectivePercentage =
-        math.max(0.08, fillPercentage.clamp(0.0, 1.0));
+    final double effectivePercentage = math.max(
+      0.08,
+      fillPercentage.clamp(0.0, 1.0),
+    );
     final double fillHeight = size.height * effectivePercentage;
     final double baseWaterY = size.height - fillHeight;
 
