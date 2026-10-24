@@ -124,7 +124,7 @@ class OnboardingScreen extends StatelessWidget {
                           Column(
                             children: [
                               Text(
-                                '${state.onbGoal.round()}',
+                                '${state.onbGoal.round()} oz',
                                 style: GoogleFonts.fredoka(
                                   fontSize: 40,
                                   fontWeight: FontWeight.w600,
