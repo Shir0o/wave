@@ -33,7 +33,7 @@ void main() {
         // Verify page text
         expect(find.text('Ride your\nhydration wave.'), findsOneWidget);
         expect(find.text('DAILY GOAL'), findsOneWidget);
-        expect(find.text('100'), findsOneWidget);
+        expect(find.text('100 oz'), findsOneWidget);
 
         // Find the add (plus) button and click it
         final plusFinder = find.byIcon(Icons.add);
@@ -42,7 +42,7 @@ void main() {
         await tester.pump();
 
         expect(state.onbGoal, 108.0);
-        expect(find.text('108'), findsOneWidget);
+        expect(find.text('108 oz'), findsOneWidget);
 
         // Find the remove (minus) button and click it
         final minusFinder = find.byIcon(Icons.remove);
@@ -51,7 +51,7 @@ void main() {
         await tester.pump();
 
         expect(state.onbGoal, 100.0);
-        expect(find.text('100'), findsOneWidget);
+        expect(find.text('100 oz'), findsOneWidget);
 
         // Verify switch and toggle it
         final switchFinder = find.byType(Switch);

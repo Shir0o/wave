@@ -64,6 +64,7 @@ void main() {
       expect(find.text('Glass'), findsOneWidget);
       expect(find.text('Bottle'), findsOneWidget);
       expect(find.text('Coffee'), findsNWidgets(2));
+      expect(find.text('OZ'), findsNothing);
 
       // 2. Toggle theme directly to verify state and UI updates
       state.toggleTheme();
@@ -115,6 +116,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
       expect(state.currentScreen, 'log');
       expect(find.text('Just describe your drink'), findsOneWidget);
+      expect(find.text('Reminders'), findsOneWidget);
 
       // 8. Go back to Home
       final backBtnFinder = find.byIcon(Icons.arrow_back_rounded);

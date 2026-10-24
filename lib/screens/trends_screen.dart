@@ -222,17 +222,29 @@ class TrendsScreen extends StatelessWidget {
                               children: [
                                 // Bar fill
                                 Expanded(
-                                  child: FractionallySizedBox(
-                                    heightFactor: pct.clamp(0.01, 1.0),
-                                    child: Container(
-                                      width: 22,
-                                      decoration: BoxDecoration(
-                                        color: isToday
-                                            ? theme.accent
-                                            : theme.bar,
-                                        borderRadius: BorderRadius.circular(11),
-                                      ),
+                                  child: TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(
+                                      begin: 0.0,
+                                      end: pct.clamp(0.01, 1.0),
                                     ),
+                                    duration: const Duration(milliseconds: 600),
+                                    curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+                                    builder: (context, animPct, child) {
+                                      return FractionallySizedBox(
+                                        heightFactor: animPct,
+                                        child: Container(
+                                          width: 22,
+                                          decoration: BoxDecoration(
+                                            color: isToday
+                                                ? theme.accent
+                                                : theme.bar,
+                                            borderRadius: BorderRadius.circular(
+                                              11,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(height: 7),

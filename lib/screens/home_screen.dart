@@ -8,8 +8,15 @@ import 'package:wave/theme/app_theme.dart';
 import 'package:wave/utils/icon_helper.dart';
 import 'package:wave/widgets/wave_painter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  double _prevConsumed = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +27,7 @@ class HomeScreen extends StatelessWidget {
 
     final todayConsumed = state.totalConsumedToday;
     final fillPercentage = (todayConsumed / state.goalOz).clamp(0.0, 1.0);
+    final beginVal = _prevConsumed;
 
     final now = DateTime.now();
     final hour = now.hour;
@@ -62,9 +70,12 @@ class HomeScreen extends StatelessWidget {
                 Positioned.fill(
                   child: IgnorePointer(
                     child: TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: todayConsumed),
+                      tween: Tween<double>(begin: beginVal, end: todayConsumed),
                       duration: const Duration(milliseconds: 900),
                       curve: const Cubic(0.34, 0.02, 0.16, 1.0),
+                      onEnd: () {
+                        _prevConsumed = todayConsumed;
+                      },
                       builder: (context, animConsumed, child) {
                         final animPct = (animConsumed / state.goalOz * 100)
                             .clamp(0.0, 100.0)
@@ -187,37 +198,6 @@ class HomeScreen extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              // Unit Setting Toggle
-                              TextButton(
-                                onPressed: () {
-                                  final nextUnit = state.unit == 'oz'
-                                      ? 'ml'
-                                      : 'oz';
-                                  state.setUnit(nextUnit);
-                                  state.showToast('Unit changed to $nextUnit');
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: theme.surface,
-                                  shadowColor: theme.shadow,
-                                  elevation: 4,
-                                  minimumSize: const Size(44, 44),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                ),
-                                child: Text(
-                                  state.unit.toUpperCase(),
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.accent,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 9),
                               // Theme Toggle
                               IconButton(
                                 onPressed: () => state.toggleTheme(),
@@ -239,9 +219,9 @@ class HomeScreen extends StatelessWidget {
                               // Health Connect Navigate
                               IconButton(
                                 onPressed: () => state.navigateTo('sync'),
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.favorite_rounded,
-                                  color: Colors.redAccent,
+                                  color: theme.accent,
                                   size: 22,
                                 ),
                                 style: IconButton.styleFrom(
@@ -282,7 +262,7 @@ class HomeScreen extends StatelessWidget {
                         _buildQuickAddBtn(
                           context,
                           theme: theme,
-                          icon: Icons.opacity_rounded,
+                          icon: Icons.water_drop_rounded,
                           title: 'Bottle',
                           vol: '16 oz',
                           onTap: () => state.quickAddBottle(),
@@ -436,7 +416,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF2589CF).withOpacity(0.14),
+              color: theme.shadow,
               blurRadius: 22,
               offset: const Offset(0, 8),
             ),
@@ -512,7 +492,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF2589CF).withOpacity(0.08),
+              color: theme.shadow,
               blurRadius: 14,
               offset: const Offset(0, 4),
             ),

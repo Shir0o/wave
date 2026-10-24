@@ -61,27 +61,39 @@ class MainNavigationWrapper extends StatelessWidget {
     // Handle full-screen transitions outside bottom nav
     if (state.currentScreen == 'onboard') {
       return const OnboardingScreen();
-    } else if (state.currentScreen == 'log') {
-      return const SmartLogScreen();
     }
 
-    Widget body;
+    int activeIndex = 0;
     switch (state.currentScreen) {
       case 'home':
-        body = const HomeScreen();
+        activeIndex = 0;
         break;
       case 'reminders':
-        body = const RemindersScreen();
+        activeIndex = 1;
         break;
       case 'stats':
-        body = const TrendsScreen();
+        activeIndex = 2;
         break;
       case 'sync':
-        body = const SyncScreen();
+        activeIndex = 3;
+        break;
+      case 'log':
+        activeIndex = 4;
         break;
       default:
-        body = const HomeScreen();
+        activeIndex = 0;
     }
+
+    final body = IndexedStack(
+      index: activeIndex,
+      children: const [
+        HomeScreen(),
+        RemindersScreen(),
+        TrendsScreen(),
+        SyncScreen(),
+        SmartLogScreen(),
+      ],
+    );
 
     return Scaffold(
       backgroundColor: theme.bg,
@@ -213,7 +225,7 @@ class MainNavigationWrapper extends StatelessWidget {
                 _buildNavItem(
                   context,
                   screenName: 'stats',
-                  icon: Icons.bar_chart_rounded,
+                  icon: Icons.show_chart_rounded,
                   label: 'Trends',
                   theme: theme,
                   state: state,
