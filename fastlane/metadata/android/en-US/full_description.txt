@@ -1,0 +1,22 @@
+Stay hydrated effortlessly with Wave, the smart and intuitive water tracker designed to make healthy habits simple and engaging.
+
+✨ KEY FEATURES:
+
+🌊 Dynamic Fluid Wave Visuals
+Watch your hydration level rise in real time with beautiful, soothing wave animations reflecting your daily water intake.
+
+🤖 Smart Natural-Language Logging
+Log drinks quickly by typing naturally (e.g., "two glasses of water and an iced coffee"). Wave automatically parses drink types, volumes (ml, oz, cups), and applies hydration coefficients.
+
+🔔 Adaptive Reminders
+Smart notifications tailored to your sleep and wake schedule ensure you stay consistently hydrated throughout the day without unnecessary interruptions.
+
+📊 Insights & Trends
+Track weekly averages, daily streaks, and intake history to see how your habits improve over time.
+
+❤️ Health & Privacy Focused
+- Designed with privacy first: hydration records stay on your device.
+- Offline-ready functionality.
+- Optional integration with your favorite health platforms.
+
+Build a healthier lifestyle, one wave at a time. Download Wave today!
