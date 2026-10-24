@@ -739,7 +739,9 @@ class AppState extends ChangeNotifier {
             );
         for (var point in waterPoints) {
           if (point.value is NumericHealthValue) {
-            if (point.sourceId == 'com.twang.wave.wave' ||
+            if (point.sourceId == 'com.twang.wave' ||
+                point.sourceName == 'com.twang.wave' ||
+                point.sourceId == 'com.twang.wave.wave' ||
                 point.sourceName == 'com.twang.wave.wave') {
               continue;
             }

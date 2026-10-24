@@ -1,4 +1,4 @@
-package com.twang.wave.wave
+package com.twang.wave
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
