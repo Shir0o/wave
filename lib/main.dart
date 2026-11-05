@@ -35,13 +35,13 @@ class WaveApp extends StatelessWidget {
         brightness: Brightness.light,
         scaffoldBackgroundColor: theme.bg,
         useMaterial3: true,
-        textTheme: GoogleFonts.fredokaTextTheme(ThemeData.light().textTheme),
+        fontFamily: GoogleFonts.fredoka().fontFamily,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: theme.bg,
         useMaterial3: true,
-        textTheme: GoogleFonts.fredokaTextTheme(ThemeData.dark().textTheme),
+        fontFamily: GoogleFonts.fredoka().fontFamily,
       ),
       home: const MainNavigationWrapper(),
     );
