@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/Shir0o/wave/compare/v1.1.1...v1.1.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* **ci:** pin action SHAs to immutable hashes (alerts [#2](https://github.com/Shir0o/wave/issues/2)-[#6](https://github.com/Shir0o/wave/issues/6)) ([#28](https://github.com/Shir0o/wave/issues/28)) ([664f4d7](https://github.com/Shir0o/wave/commit/664f4d7ad35ef06ca3a7ec03aa29c3bcbe3b3395))
+* **ci:** set explicit read permissions on workflow (alert [#1](https://github.com/Shir0o/wave/issues/1)) ([#27](https://github.com/Shir0o/wave/issues/27)) ([953f7bd](https://github.com/Shir0o/wave/commit/953f7bd3ea3310efec555925b04231dafbd0e130))
+* **ui:** resolve render overflows and wcag contrast in layout matrix ([#32](https://github.com/Shir0o/wave/issues/32)) ([2a8cf1a](https://github.com/Shir0o/wave/commit/2a8cf1a84c7836d89e1d40358ca47424f06af9e8))
+
 ## [1.1.0](https://github.com/Shir0o/wave/compare/v1.0.0...v1.1.0) (2026-10-24)
 
 
