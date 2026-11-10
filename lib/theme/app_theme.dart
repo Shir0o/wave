@@ -61,7 +61,7 @@ class AppThemeColors {
     surfaceSoft: const Color(0xFFE4F4FB),
     surfaceTint: const Color(0xFFF0F9FD),
     text: const Color(0xFF0B2B45),
-    text2: const Color(0xFF5C7D96),
+    text2: const Color(0xFF476982),
     text3: const Color(0xFF9BB4C8),
     accent: const Color(0xFF12B3C7),
     accent2: const Color(0xFF0D94A6),
