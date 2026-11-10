@@ -201,42 +201,50 @@ class MainNavigationWrapper extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(
-                  context,
-                  screenName: 'home',
-                  icon: Icons.home_rounded,
-                  label: 'Home',
-                  theme: theme,
-                  state: state,
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    screenName: 'home',
+                    icon: Icons.home_rounded,
+                    label: 'Home',
+                    theme: theme,
+                    state: state,
+                  ),
                 ),
-                _buildNavItem(
-                  context,
-                  screenName: 'reminders',
-                  icon: Icons.notifications_rounded,
-                  label: 'Reminders',
-                  theme: theme,
-                  state: state,
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    screenName: 'reminders',
+                    icon: Icons.notifications_rounded,
+                    label: 'Reminders',
+                    theme: theme,
+                    state: state,
+                  ),
                 ),
                 const SizedBox(width: 48), // spacer for central FAB
-                _buildNavItem(
-                  context,
-                  screenName: 'stats',
-                  icon: Icons.show_chart_rounded,
-                  label: 'Trends',
-                  theme: theme,
-                  state: state,
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    screenName: 'stats',
+                    icon: Icons.show_chart_rounded,
+                    label: 'Trends',
+                    theme: theme,
+                    state: state,
+                  ),
                 ),
-                _buildNavItem(
-                  context,
-                  screenName: 'sync',
-                  icon: Icons.favorite_rounded,
-                  label: 'Sync',
-                  theme: theme,
-                  state: state,
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    screenName: 'sync',
+                    icon: Icons.favorite_rounded,
+                    label: 'Sync',
+                    theme: theme,
+                    state: state,
+                  ),
                 ),
               ],
             ),
@@ -255,7 +263,12 @@ class MainNavigationWrapper extends StatelessWidget {
     required AppState state,
   }) {
     final bool isSelected = state.currentScreen == screenName;
-    final color = isSelected ? theme.accent : theme.text3;
+    final iconColor = isSelected ? theme.accent : theme.text3;
+    final textColor = isSelected
+        ? (state.isDarkTheme ? theme.accent : const Color(0xFF0D7E8F))
+        : (state.isDarkTheme
+              ? const Color(0xFF9DB6C8)
+              : const Color(0xFF476982));
 
     return Material(
       color: Colors.transparent,
@@ -263,18 +276,23 @@ class MainNavigationWrapper extends StatelessWidget {
         onTap: () => state.navigateTo(screenName),
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          width: 60,
+          height: 72,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                style: GoogleFonts.fredoka(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: color,
+              Icon(icon, color: iconColor, size: 24),
+              const SizedBox(height: 2),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: GoogleFonts.fredoka(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
                 ),
               ),
             ],

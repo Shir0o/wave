@@ -200,6 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               // Theme Toggle
                               IconButton(
+                                tooltip: state.isDarkTheme
+                                    ? 'Switch to light mode'
+                                    : 'Switch to dark mode',
                                 onPressed: () => state.toggleTheme(),
                                 icon: Icon(
                                   state.isDarkTheme
@@ -212,12 +215,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   backgroundColor: theme.surface,
                                   shadowColor: theme.shadow,
                                   elevation: 4,
-                                  fixedSize: const Size(44, 44),
+                                  fixedSize: const Size(48, 48),
                                 ),
                               ),
                               const SizedBox(width: 9),
                               // Health Connect Navigate
                               IconButton(
+                                tooltip: 'Sync with Health Connect',
                                 onPressed: () => state.navigateTo('sync'),
                                 icon: Icon(
                                   Icons.favorite_rounded,
@@ -228,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   backgroundColor: theme.surface,
                                   shadowColor: theme.shadow,
                                   elevation: 4,
-                                  fixedSize: const Size(44, 44),
+                                  fixedSize: const Size(48, 48),
                                 ),
                               ),
                             ],
@@ -348,14 +352,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Today's drinks",
-                        style: GoogleFonts.fredoka(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w600,
-                          color: theme.text,
+                      Expanded(
+                        child: Text(
+                          "Today's drinks",
+                          style: GoogleFonts.fredoka(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w600,
+                            color: theme.text,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '${(todayConsumed / 8.0).toStringAsFixed(1)} cups',
                         style: GoogleFonts.fredoka(
