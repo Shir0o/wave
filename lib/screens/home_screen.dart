@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Animated Wave Container
                 SizedBox(
+                  width: double.infinity,
                   height: 398,
                   child: WaveContainer(
                     fillPercentage: fillPercentage,
@@ -100,43 +101,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  '$animPct',
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 82,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.onWave,
-                                    height: 1.0,
-                                    shadows: [
-                                      Shadow(
-                                        color: theme.onWaveSh,
-                                        offset: const Offset(0, 4),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    '$animPct',
+                                    style: GoogleFonts.fredoka(
+                                      fontSize: 82,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.onWave,
+                                      height: 1.0,
+                                      shadows: [
+                                        Shadow(
+                                          color: theme.onWaveSh,
+                                          offset: const Offset(0, 4),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '%',
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.onWave,
-                                    shadows: [
-                                      Shadow(
-                                        color: theme.onWaveSh,
-                                        offset: const Offset(0, 4),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
+                                  Text(
+                                    '%',
+                                    style: GoogleFonts.fredoka(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.onWave,
+                                      shadows: [
+                                        Shadow(
+                                          color: theme.onWaveSh,
+                                          offset: const Offset(0, 4),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -174,27 +178,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dateStr,
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: theme.text2,
-                                  letterSpacing: 0.3,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  dateStr,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: theme.text2,
+                                    letterSpacing: 0.3,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                greeting,
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.text,
+                                Text(
+                                  greeting,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.fredoka(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.text,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           Row(
                             children: [
