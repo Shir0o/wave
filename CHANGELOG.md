@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/Shir0o/wave/compare/v1.1.2...v1.1.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **ui:** expand home wave hero to full width and fix overflow ([#33](https://github.com/Shir0o/wave/issues/33)) ([90d26bb](https://github.com/Shir0o/wave/commit/90d26bb47c4eca4b61ed7a91af9bea255f49e7e4))
+
 ## [1.1.2](https://github.com/Shir0o/wave/compare/v1.1.1...v1.1.2) (2026-11-10)
 
 
