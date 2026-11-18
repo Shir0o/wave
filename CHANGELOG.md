@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/Shir0o/wave/compare/v1.1.3...v1.1.4) (2026-11-18)
+
+
+### Bug Fixes
+
+* **ui:** enforce WCAG AA contrast tokens and 48dp tap targets ([#37](https://github.com/Shir0o/wave/issues/37)) ([74dc785](https://github.com/Shir0o/wave/commit/74dc78514677fc8d0ec8d9fde1b469da4f1f4936))
+
 ## [1.1.3](https://github.com/Shir0o/wave/compare/v1.1.2...v1.1.3) (2026-11-11)
 
 
