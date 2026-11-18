@@ -161,8 +161,8 @@ class MainNavigationWrapper extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: theme.surface, width: 4),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+            gradient: LinearGradient(
+              colors: [theme.brandGradStart, theme.brandGradEnd],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -264,11 +264,7 @@ class MainNavigationWrapper extends StatelessWidget {
   }) {
     final bool isSelected = state.currentScreen == screenName;
     final iconColor = isSelected ? theme.accent : theme.text3;
-    final textColor = isSelected
-        ? (state.isDarkTheme ? theme.accent : const Color(0xFF0D7E8F))
-        : (state.isDarkTheme
-              ? const Color(0xFF9DB6C8)
-              : const Color(0xFF476982));
+    final textColor = isSelected ? theme.accent2 : theme.text2;
 
     return Material(
       color: Colors.transparent,

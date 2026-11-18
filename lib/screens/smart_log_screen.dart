@@ -153,7 +153,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                           icon: Icon(Icons.mic_rounded, color: theme.accent2),
                           style: IconButton.styleFrom(
                             backgroundColor: theme.surfaceSoft,
-                            fixedSize: const Size(46, 46),
+                            fixedSize: const Size(48, 48),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -166,7 +166,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                           ),
                           style: IconButton.styleFrom(
                             backgroundColor: theme.surfaceSoft,
-                            fixedSize: const Size(46, 46),
+                            fixedSize: const Size(48, 48),
                           ),
                         ),
                         const Spacer(),
@@ -174,12 +174,15 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                         GestureDetector(
                           onTap: () => state.setAiText(_controller.text),
                           child: Container(
-                            width: 46,
-                            height: 46,
-                            decoration: const BoxDecoration(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
-                                colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                                colors: [
+                                  theme.brandGradStart,
+                                  theme.brandGradEnd,
+                                ],
                               ),
                             ),
                             child: const Icon(
@@ -241,28 +244,35 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                       state.setAiText(label);
                     },
                     borderRadius: BorderRadius.circular(22),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 9,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.surface,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.shadow,
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 48),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 9,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.surface,
+                          borderRadius: BorderRadius.circular(22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.shadow,
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          widthFactor: 1,
+                          heightFactor: 1,
+                          child: Text(
+                            label,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: theme.accent2,
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        label,
-                        style: GoogleFonts.fredoka(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: theme.accent2,
                         ),
                       ),
                     ),
@@ -457,10 +467,10 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                                   ),
                               child: Ink(
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFF2FC4DC),
-                                      Color(0xFF1F8FD0),
+                                      theme.brandGradStart,
+                                      theme.brandGradEnd,
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
@@ -583,44 +593,47 @@ class _SmartLogScreenState extends State<SmartLogScreen>
               return InkWell(
                 onTap: () => state.repeatOne(entry),
                 borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 13,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.surfaceTint,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        getIconData(entry.icon),
-                        color: theme.accent2,
-                        size: 19,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        entry.name,
-                        style: GoogleFonts.fredoka(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: theme.text,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 13,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.surfaceTint,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          getIconData(entry.icon),
+                          color: theme.accent2,
+                          size: 19,
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${entry.oz.round()} oz',
-                        style: GoogleFonts.fredoka(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: theme.text3,
+                        const SizedBox(width: 8),
+                        Text(
+                          entry.name,
+                          style: GoogleFonts.fredoka(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: theme.text,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      Icon(Icons.add_rounded, color: theme.accent, size: 17),
-                    ],
+                        const SizedBox(width: 6),
+                        Text(
+                          '${entry.oz.round()} oz',
+                          style: GoogleFonts.fredoka(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: theme.text3,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.add_rounded, color: theme.accent, size: 17),
+                      ],
+                    ),
                   ),
                 ),
               );

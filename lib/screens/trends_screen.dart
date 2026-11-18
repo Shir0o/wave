@@ -53,8 +53,8 @@ class TrendsScreen extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                        gradient: LinearGradient(
+                          colors: [theme.brandGradStart, theme.brandGradEnd],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -83,7 +83,7 @@ class TrendsScreen extends StatelessWidget {
                                 style: GoogleFonts.fredoka(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withOpacity(0.95),
                                 ),
                               ),
                             ],
@@ -106,7 +106,7 @@ class TrendsScreen extends StatelessWidget {
                                 style: GoogleFonts.fredoka(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white.withOpacity(0.85),
+                                  color: Colors.white.withOpacity(0.95),
                                 ),
                               ),
                             ],
@@ -254,7 +254,9 @@ class TrendsScreen extends StatelessWidget {
                                   style: GoogleFonts.fredoka(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: isToday ? theme.accent : theme.text3,
+                                    color: isToday
+                                        ? theme.accent2
+                                        : theme.text3,
                                   ),
                                 ),
                               ],

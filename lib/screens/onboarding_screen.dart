@@ -40,8 +40,8 @@ class OnboardingScreen extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                    gradient: LinearGradient(
+                      colors: [theme.brandGradStart, theme.brandGradEnd],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -236,8 +236,8 @@ class OnboardingScreen extends StatelessWidget {
                     ).copyWith(elevation: ButtonStyleButton.allOrNull(0)),
                     child: Ink(
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                        gradient: LinearGradient(
+                          colors: [theme.brandGradStart, theme.brandGradEnd],
                         ),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [

@@ -296,8 +296,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Smart Log Banner
                   Container(
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                      gradient: LinearGradient(
+                        colors: [theme.brandGradStart, theme.brandGradEnd],
                       ),
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
@@ -340,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: GoogleFonts.fredoka(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.white.withOpacity(0.9),
+                                        color: Colors.white.withOpacity(0.95),
                                       ),
                                     ),
                                   ],
