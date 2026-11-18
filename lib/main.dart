@@ -9,6 +9,7 @@ import 'package:wave/screens/sync_screen.dart';
 import 'package:wave/screens/trends_screen.dart';
 import 'package:wave/state/app_state.dart';
 import 'package:wave/theme/app_theme.dart';
+import 'package:wave/theme/wave_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,26 +24,13 @@ class WaveApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme
-        ? AppThemeColors.dark
-        : AppThemeColors.light;
 
     return MaterialApp(
       title: 'Wave - Hydration Tracker',
       debugShowCheckedModeBanner: false,
       themeMode: state.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: theme.bg,
-        useMaterial3: true,
-        fontFamily: GoogleFonts.fredoka().fontFamily,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: theme.bg,
-        useMaterial3: true,
-        fontFamily: GoogleFonts.fredoka().fontFamily,
-      ),
+      theme: buildWaveTheme(AppThemeColors.light, Brightness.light),
+      darkTheme: buildWaveTheme(AppThemeColors.dark, Brightness.dark),
       home: const MainNavigationWrapper(),
     );
   }
@@ -161,8 +149,8 @@ class MainNavigationWrapper extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: theme.surface, width: 4),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+            gradient: LinearGradient(
+              colors: [theme.brandGradStart, theme.brandGradEnd],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -264,11 +252,7 @@ class MainNavigationWrapper extends StatelessWidget {
   }) {
     final bool isSelected = state.currentScreen == screenName;
     final iconColor = isSelected ? theme.accent : theme.text3;
-    final textColor = isSelected
-        ? (state.isDarkTheme ? theme.accent : const Color(0xFF0D7E8F))
-        : (state.isDarkTheme
-              ? const Color(0xFF9DB6C8)
-              : const Color(0xFF476982));
+    final textColor = isSelected ? theme.accent2 : theme.text2;
 
     return Material(
       color: Colors.transparent,

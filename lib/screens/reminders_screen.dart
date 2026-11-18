@@ -51,8 +51,8 @@ class RemindersScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF2FC4DC), Color(0xFF1F8FD0)],
+                  gradient: LinearGradient(
+                    colors: [theme.brandGradStart, theme.brandGradEnd],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -91,7 +91,7 @@ class RemindersScreen extends StatelessWidget {
                             'AI times each nudge around your intake, sleep window & activity.',
                             style: GoogleFonts.fredoka(
                               fontSize: 12.5,
-                              color: Colors.white.withOpacity(0.92),
+                              color: Colors.white.withOpacity(0.95),
                               fontWeight: FontWeight.w400,
                               height: 1.5,
                             ),
@@ -134,8 +134,8 @@ class RemindersScreen extends StatelessWidget {
                       onTap: () =>
                           _showActiveHoursPicker(context, state, theme),
                       borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 48),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -343,7 +343,7 @@ class RemindersScreen extends StatelessWidget {
                 trailing: Text(
                   state.wakeTime,
                   style: GoogleFonts.fredoka(
-                    color: theme.accent,
+                    color: theme.accent2,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -366,7 +366,7 @@ class RemindersScreen extends StatelessWidget {
                 trailing: Text(
                   state.sleepTime,
                   style: GoogleFonts.fredoka(
-                    color: theme.accent,
+                    color: theme.accent2,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -388,7 +388,7 @@ class RemindersScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Done',
-                style: GoogleFonts.fredoka(color: theme.accent),
+                style: GoogleFonts.fredoka(color: theme.accent2),
               ),
             ),
           ],

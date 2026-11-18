@@ -16,8 +16,8 @@ class SyncScreen extends StatelessWidget {
 
     // Health Connect Card Colors
     final connCardBg = state.healthConnectConnected
-        ? const [Color(0xFF2FC4DC), Color(0xFF1F8FD0)]
-        : [theme.text3, theme.text2];
+        ? [theme.brandGradStart, theme.brandGradEnd]
+        : [theme.gradMutedStart, theme.gradMutedEnd];
     final connLabel = state.healthConnectConnected
         ? 'Connected & syncing'
         : 'Not connected';
@@ -97,7 +97,7 @@ class SyncScreen extends StatelessWidget {
                                     connLabel,
                                     style: GoogleFonts.fredoka(
                                       fontSize: 13,
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withOpacity(0.95),
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -125,7 +125,7 @@ class SyncScreen extends StatelessWidget {
                             'Last sync · ${state.lastSyncStr}',
                             style: GoogleFonts.fredoka(
                               fontSize: 13,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withOpacity(0.95),
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -136,9 +136,9 @@ class SyncScreen extends StatelessWidget {
                             icon: const Icon(Icons.sync_rounded, size: 17),
                             label: const Text('Sync now'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
+                              backgroundColor: theme.surface,
                               foregroundColor: state.healthConnectConnected
-                                  ? const Color(0xFF1F8FD0)
+                                  ? theme.accent2
                                   : theme.text3,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(
@@ -255,9 +255,6 @@ class SyncScreen extends StatelessWidget {
                   final app = state.otherApps[index];
                   final bool isConnected = app['connected'] == true;
                   final statusText = isConnected ? 'Connected' : 'Connect';
-                  final statusColor = isConnected
-                      ? theme.accent2
-                      : theme.accent;
 
                   return Container(
                     decoration: BoxDecoration(
@@ -298,7 +295,7 @@ class SyncScreen extends StatelessWidget {
                                 style: GoogleFonts.fredoka(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: statusColor,
+                                  color: theme.accent2,
                                 ),
                               ),
                             ],
@@ -385,7 +382,7 @@ class SyncScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.accent,
+                backgroundColor: theme.accentDeep,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

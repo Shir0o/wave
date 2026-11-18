@@ -12,6 +12,11 @@ class AppThemeColors {
   final Color text3;
   final Color accent;
   final Color accent2;
+  final Color accentDeep;
+  final Color brandGradStart;
+  final Color brandGradEnd;
+  final Color gradMutedStart;
+  final Color gradMutedEnd;
   final Color divider;
   final Color divider2;
   final Color onWave;
@@ -38,6 +43,11 @@ class AppThemeColors {
     required this.text3,
     required this.accent,
     required this.accent2,
+    required this.accentDeep,
+    required this.brandGradStart,
+    required this.brandGradEnd,
+    required this.gradMutedStart,
+    required this.gradMutedEnd,
     required this.divider,
     required this.divider2,
     required this.onWave,
@@ -61,10 +71,21 @@ class AppThemeColors {
     surfaceSoft: const Color(0xFFE4F4FB),
     surfaceTint: const Color(0xFFF0F9FD),
     text: const Color(0xFF0B2B45),
-    text2: const Color(0xFF476982),
-    text3: const Color(0xFF9BB4C8),
+    // >= 8:1 on white. Dark enough that glyph antialiasing (which the contrast
+    // audit samples as a blended pixel) still clears 4.5:1 at small sizes.
+    text2: const Color(0xFF34526A),
+    // >= 6.9:1 on bg, surface, surfaceSoft and surfaceTint for small labels.
+    text3: const Color(0xFF425C72),
     accent: const Color(0xFF12B3C7),
-    accent2: const Color(0xFF0D94A6),
+    // Text-safe accent: >= 5:1 on white, surfaceSoft and the nav bar.
+    accent2: const Color(0xFF0A7180),
+    // Accent fill that always carries white text (>= 5.7:1).
+    accentDeep: const Color(0xFF0A7180),
+    // Brand gradient stops: white text stays >= 5.8:1 across the ramp.
+    brandGradStart: const Color(0xFF116E8A),
+    brandGradEnd: const Color(0xFF0B5F86),
+    gradMutedStart: const Color(0xFF526E85),
+    gradMutedEnd: const Color(0xFF476982),
     divider: const Color(0xFFEEF4F8),
     divider2: const Color(0xFFF0F6FA),
     onWave: const Color(0xFF0B2B45),
@@ -89,9 +110,15 @@ class AppThemeColors {
     surfaceTint: const Color(0xFF172A3B),
     text: const Color(0xFFE8F3FB),
     text2: const Color(0xFF9DB6C8),
-    text3: const Color(0xFF6A8298),
+    // >= 4.9:1 on every dark surface, including surfaceSoft.
+    text3: const Color(0xFF8AA3B8),
     accent: const Color(0xFF3FD0E6),
     accent2: const Color(0xFF4CC8DB),
+    accentDeep: const Color(0xFF0A7180),
+    brandGradStart: const Color(0xFF116E8A),
+    brandGradEnd: const Color(0xFF0B5F86),
+    gradMutedStart: const Color(0xFF2B4459),
+    gradMutedEnd: const Color(0xFF1C3446),
     divider: const Color(0xFF1F3346),
     divider2: const Color(0xFF1B2E40),
     onWave: const Color(0xFFEAF6FF),
