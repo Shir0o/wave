@@ -9,6 +9,7 @@ import 'package:wave/screens/sync_screen.dart';
 import 'package:wave/screens/trends_screen.dart';
 import 'package:wave/state/app_state.dart';
 import 'package:wave/theme/app_theme.dart';
+import 'package:wave/theme/wave_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,26 +24,13 @@ class WaveApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final theme = state.isDarkTheme
-        ? AppThemeColors.dark
-        : AppThemeColors.light;
 
     return MaterialApp(
       title: 'Wave - Hydration Tracker',
       debugShowCheckedModeBanner: false,
       themeMode: state.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: theme.bg,
-        useMaterial3: true,
-        fontFamily: GoogleFonts.fredoka().fontFamily,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: theme.bg,
-        useMaterial3: true,
-        fontFamily: GoogleFonts.fredoka().fontFamily,
-      ),
+      theme: buildWaveTheme(AppThemeColors.light, Brightness.light),
+      darkTheme: buildWaveTheme(AppThemeColors.dark, Brightness.dark),
       home: const MainNavigationWrapper(),
     );
   }

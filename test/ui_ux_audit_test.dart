@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wave/main.dart';
@@ -19,7 +20,13 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   mockPlatformChannels();
 
-  setUpAll(_loadAuditFonts);
+  setUpAll(() async {
+    // google_fonts fetches a font per weight at runtime, which a widget test
+    // can never satisfy. Disabling fetching keeps the suite off the network;
+    // the metric-matched families registered below still render every label.
+    GoogleFonts.config.allowRuntimeFetching = false;
+    await _loadAuditFonts();
+  });
 
   final variants = [
     (
@@ -538,12 +545,11 @@ class _ClickThroughAudit {
 /// exist in the test environment. Best effort: if the SDK fonts are missing the
 /// audit still runs with the default test font.
 Future<void> _loadAuditFonts() async {
-  final flutterRoot = Platform.environment['FLUTTER_ROOT'];
-  if (flutterRoot == null) {
+  final fontDir = _materialFontsDirectory();
+  if (fontDir == null) {
     return;
   }
 
-  final fontDir = Directory('$flutterRoot/bin/cache/artifacts/material_fonts');
   const families = {
     'Fredoka': 'Roboto-Regular.ttf',
     // Google Fonts names each weight-specific family after its variant:
@@ -574,4 +580,38 @@ Future<void> _loadAuditFonts() async {
       'MaterialIcons',
     )..addFont(Future.value(ByteData.sublistView(bytes)))).load();
   }
+}
+
+/// Finds the Flutter SDK's cached Material fonts.
+///
+/// CI runners do not always export `FLUTTER_ROOT` to the test process, but
+/// `flutter test` always spawns `flutter_tester` from
+/// `<sdk>/bin/cache/artifacts/engine/<platform>/`, so walk up from the running
+/// executable as well. Returns null when neither lookup finds the cache, in
+/// which case the audit runs with Flutter's built-in test font.
+Directory? _materialFontsDirectory() {
+  final candidates = <Directory>[];
+  final flutterRoot = Platform.environment['FLUTTER_ROOT'];
+  if (flutterRoot != null && flutterRoot.isNotEmpty) {
+    candidates.add(
+      Directory('$flutterRoot/bin/cache/artifacts/material_fonts'),
+    );
+  }
+
+  var dir = File(Platform.resolvedExecutable).parent;
+  for (var depth = 0; depth < 8; depth++) {
+    candidates.add(Directory('${dir.path}/bin/cache/artifacts/material_fonts'));
+    final parent = dir.parent;
+    if (parent.path == dir.path) {
+      break;
+    }
+    dir = parent;
+  }
+
+  for (final candidate in candidates) {
+    if (candidate.existsSync()) {
+      return candidate;
+    }
+  }
+  return null;
 }
