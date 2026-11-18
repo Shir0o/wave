@@ -38,9 +38,12 @@ ThemeData buildWaveTheme(AppThemeColors colors, Brightness brightness) {
 
   // Dialog action labels (Cancel / OK) sit on [colors.surface], where
   // [colors.text] is > 12:1 in both modes. That headroom survives the blended
-  // pixel the contrast audit samples from antialiased glyph edges.
+  // pixel the contrast audit samples from antialiased glyph edges. The bold
+  // weight thickens each stroke's solid core so a 1x Linux renderer leaves far
+  // fewer partially covered fringe pixels for the audit to sample.
   final ButtonStyle dialogActionStyle = TextButton.styleFrom(
     foregroundColor: colors.text,
+    textStyle: const TextStyle(fontWeight: FontWeight.w700),
   );
 
   return ThemeData(

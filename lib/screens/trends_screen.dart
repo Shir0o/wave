@@ -252,11 +252,11 @@ class TrendsScreen extends StatelessWidget {
                                 Text(
                                   labels[index],
                                   style: GoogleFonts.fredoka(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: isToday
                                         ? theme.accent2
-                                        : theme.text3,
+                                        : theme.text2,
                                   ),
                                 ),
                               ],

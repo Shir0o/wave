@@ -556,7 +556,10 @@ Future<void> _loadAuditFonts() async {
     // w400 -> "Fredoka_regular", w500 -> "Fredoka_500", w600 -> "Fredoka_600".
     'Fredoka_regular': 'Roboto-Regular.ttf',
     'Fredoka_500': 'Roboto-Medium.ttf',
-    'Fredoka_600': 'Roboto-Medium.ttf',
+    // Fredoka SemiBold has thick rounded strokes that sit closer to Roboto Bold
+    // than to Roboto Medium, so the audit measures glyph cores rather than
+    // medium-weight antialiased fringes.
+    'Fredoka_600': 'Roboto-Bold.ttf',
     'Fredoka_700': 'Roboto-Bold.ttf',
   };
 
