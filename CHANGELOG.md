@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/Shir0o/wave/compare/v1.1.4...v1.1.5) (2026-11-23)
+
+
+### Bug Fixes
+
+* **ui:** surface smart log results above history and clear docked FAB ([#39](https://github.com/Shir0o/wave/issues/39)) ([146ed25](https://github.com/Shir0o/wave/commit/146ed2557577dd88d45046eeb6caa4925b9fe5ba))
+
 ## [1.1.4](https://github.com/Shir0o/wave/compare/v1.1.3...v1.1.4) (2026-11-18)
 
 
