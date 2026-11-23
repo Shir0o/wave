@@ -18,6 +18,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
     with SingleTickerProviderStateMixin {
   late TextEditingController _controller;
   late AnimationController _waveAnimController;
+  final ScrollController _scrollController = ScrollController();
 
   final List<String> _chips = [
     'a venti oat latte',
@@ -41,7 +42,19 @@ class _SmartLogScreenState extends State<SmartLogScreen>
   void dispose() {
     _controller.dispose();
     _waveAnimController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  /// Brings the header, input and the freshly parsed result card back into the
+  /// viewport after a parse, so the result is never left below the fold.
+  void _scrollToResult() {
+    if (!_scrollController.hasClients) return;
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
@@ -63,6 +76,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
       backgroundColor: theme.bg,
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,26 +99,28 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Smart log',
-                        style: GoogleFonts.fredoka(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: theme.text,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Smart log',
+                          style: GoogleFonts.fredoka(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: theme.text,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Just describe your drink',
-                        style: GoogleFonts.fredoka(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: theme.text2,
+                        Text(
+                          'Just describe your drink',
+                          style: GoogleFonts.fredoka(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: theme.text2,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -172,7 +188,10 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                         const Spacer(),
                         // Send/Parse Action
                         GestureDetector(
-                          onTap: () => state.setAiText(_controller.text),
+                          onTap: () {
+                            state.setAiText(_controller.text);
+                            _scrollToResult();
+                          },
                           child: Container(
                             width: 48,
                             height: 48,
@@ -218,6 +237,12 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                 ),
               ),
               const SizedBox(height: 16),
+              // Results Display Box — rendered directly under the input card so
+              // a parsed result is visible without scrolling past history/chips.
+              if (hasResult) ...[
+                _buildResultCard(state, theme),
+                const SizedBox(height: 16),
+              ],
               // Last Session Card (Smart Add)
               if (state.lastBatchEntries().isNotEmpty) ...[
                 _buildLastSessionCard(context, state, theme),
@@ -242,6 +267,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                   return InkWell(
                     onTap: () {
                       state.setAiText(label);
+                      _scrollToResult();
                     },
                     borderRadius: BorderRadius.circular(22),
                     child: ConstrainedBox(
@@ -279,230 +305,7 @@ class _SmartLogScreenState extends State<SmartLogScreen>
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 18),
-              // Results Display Box
-              if (hasResult)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.all(18.0),
-                  decoration: BoxDecoration(
-                    color: theme.surface,
-                    borderRadius: BorderRadius.circular(26),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.shadow,
-                        blurRadius: 28,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.auto_awesome_rounded,
-                                color: theme.accent2,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                "Here's what I got",
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.text,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 11,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.surfaceSoft,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${(state.aiResult!.confidence * 100).round()}% match',
-                              style: GoogleFonts.fredoka(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: theme.accent2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      // List parsed items
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: state.aiResult!.items.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
-                        itemBuilder: (context, index) {
-                          final it = state.aiResult!.items[index];
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 11,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.surfaceTint,
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: theme.surfaceSoft,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    getIconData(it.icon),
-                                    color: theme.accent2,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        it.name,
-                                        style: GoogleFonts.fredoka(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: theme.text,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${it.oz.round()} oz · ${(it.factor * 100).round()}% hydration',
-                                        style: GoogleFonts.fredoka(
-                                          fontSize: 12,
-                                          color: theme.text3,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  '+${it.hydration.round()}',
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.accent2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      // Total sum label
-                      Text(
-                        '${state.aiResult!.oz.round()} oz total · counts as +${state.aiResult!.hydration.round()} oz water',
-                        style: GoogleFonts.fredoka(
-                          fontSize: 13,
-                          color: theme.text2,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => state.clearAi(),
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor: theme.divider,
-                                foregroundColor: theme.text2,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                'Clear',
-                                style: GoogleFonts.fredoka(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            flex: 2,
-                            child: ElevatedButton(
-                              onPressed: () => state.confirmAiLog(),
-                              style:
-                                  ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ).copyWith(
-                                    elevation: ButtonStyleButton.allOrNull(0),
-                                  ),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      theme.brandGradStart,
-                                      theme.brandGradEnd,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(
-                                        0xFF1F8FD0,
-                                      ).withOpacity(0.35),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Log all drinks',
-                                    style: GoogleFonts.fredoka(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              const SizedBox(height: 96),
             ],
           ),
         ),
@@ -528,6 +331,232 @@ class _SmartLogScreenState extends State<SmartLogScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildResultCard(AppState state, AppThemeColors theme) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(18.0),
+      decoration: BoxDecoration(
+        color: theme.surface,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadow,
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      color: theme.accent2,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        "Here's what I got",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.fredoka(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: theme.text,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.surfaceSoft,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${(state.aiResult!.confidence * 100).round()}% match',
+                  maxLines: 1,
+                  style: GoogleFonts.fredoka(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: theme.accent2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          // List parsed items
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: state.aiResult!.items.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final it = state.aiResult!.items[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.surfaceTint,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: theme.surfaceSoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        getIconData(it.icon),
+                        color: theme.accent2,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            it.name,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: theme.text,
+                            ),
+                          ),
+                          Text(
+                            '${it.oz.round()} oz · ${(it.factor * 100).round()}% hydration',
+                            style: GoogleFonts.fredoka(
+                              fontSize: 12,
+                              color: theme.text3,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '+${it.hydration.round()}',
+                      style: GoogleFonts.fredoka(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: theme.accent2,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          // Total sum label
+          Text(
+            '${state.aiResult!.oz.round()} oz total · counts as +${state.aiResult!.hydration.round()} oz water',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.fredoka(
+              fontSize: 13,
+              color: theme.text2,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => state.clearAi(),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: theme.divider,
+                    foregroundColor: theme.text2,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Clear',
+                      maxLines: 1,
+                      style: GoogleFonts.fredoka(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: () => state.confirmAiLog(),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ).copyWith(elevation: ButtonStyleButton.allOrNull(0)),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [theme.brandGradStart, theme.brandGradEnd],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF1F8FD0).withOpacity(0.35),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'Log all drinks',
+                          maxLines: 1,
+                          style: GoogleFonts.fredoka(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
