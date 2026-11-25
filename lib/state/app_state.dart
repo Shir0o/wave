@@ -771,24 +771,7 @@ class AppState extends ChangeNotifier {
 
       // 2. Sync Steps / Activity
       if (_permissions[3]['enabled'] == true) {
-        int? steps = await Health().getTotalStepsInInterval(midnight, now);
-        if (steps != null) {
-          _syncedSteps = steps;
-        } else {
-          List<HealthDataPoint> stepsPoints = await Health()
-              .getHealthDataFromTypes(
-                startTime: midnight,
-                endTime: now,
-                types: [HealthDataType.STEPS],
-              );
-          int count = 0;
-          for (var point in stepsPoints) {
-            if (point.value is NumericHealthValue) {
-              count += (point.value as NumericHealthValue).numericValue.round();
-            }
-          }
-          _syncedSteps = count;
-        }
+        _syncedSteps = await Health().getTotalStepsInInterval(midnight, now);
       }
 
       // 3. Sync Body Weight
